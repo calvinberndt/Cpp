@@ -40,8 +40,7 @@ int main() {
 
 
     cout << left << setw(16) << "Quantity" 
-         << left << setw(16) << "Description" 
-         << right << setw(16) << "Unit Price" 
+         << left << setw(16) << "Description" 0
          << right << setw(16) << "Total Price" << endl;
 
     cout << left << setw(16) << tvNumber 
