@@ -33,6 +33,7 @@ int main() {
     switch (day) {
         case 0:
             cout << "Sunday" << endl;
+            day = true;
             break;
         case 1:
             cout << "Monday" << endl;
@@ -55,7 +56,12 @@ int main() {
         default:
             cout << "Invalid input! Please enter a number between 0 and 6." <<
     endl;
+
     }
+
+    (day == 6 || day == 0) ? cout << "It's the weekend!" : cout << "It's a weekday." << endl;
+    
+    
     return 0;
 }
 
