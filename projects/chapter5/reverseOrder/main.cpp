@@ -39,6 +39,15 @@ void reverse_dig(int &num) {
     num = stoi(reverse_string);
 }
 
+void reverse_dig(int &num) {
+    int reversed = 0;
+    while (num > 0) {
+        reversed = reversed * 10 + num % 10;
+        num /= 10;
+    }
+    num = reversed;
+}
+
 void swap(int &a, int &b) {
     int temp = a;
     a = b;
