@@ -21,6 +21,9 @@ public:
         secretMethod();
     }
 
+    // Method and defined outside of the class
+    void unusedMethod();
+
 private:
     void secretMethod() {
         cout << "This is a private method." << endl;
@@ -28,12 +31,22 @@ private:
     
 };
 
+
+//Professonal way of writing the functions from the class:
+//is done by declaring the function in the class and then place it outside the class
+
+void HelloWorld::unusedMethod() {
+    cout << "This method is declared but not used." << endl;
+}
+
+
 int main() {
 
     HelloWorld hw;
     hw.greet();
     hw.privateGreeting();
     hw.exposeSecret();
+    hw.unusedMethod();
     return 0;
 
 }
