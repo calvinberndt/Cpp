@@ -19,8 +19,63 @@ class Circle {
         void setRadius(double value);
 };
 
+class Rectangle {
+    private:
+        double length;
+        double width;
+    public:
+        Rectangle(double l, double w); //Parameterized constructor
+        Rectangle(); // Default constructor
+        Rectangle(const Rectangle &r); // Copy constructor
 
-// Implementations of the Circle class methods
+        ~Rectangle(); // Destructor, does not take any parameters
+
+        
+    // Getter and Setter methods
+        double getLength() const;
+        double getWidth() const;
+        double getArea() const;
+        double getPerimeter() const;
+        void setLength(double value);
+        void setWidth(double value);
+};
+
+
+// Implementations of the Rectangle class methods
+Rectangle::Rectangle(double l, double w) {
+    length = l;
+    width = w;
+    cout << "Parameterized constructor called." << endl;
+}
+Rectangle::Rectangle() : length(1.0), width(1.0) { // Default length and width is 1.0
+    cout << "Default constructor called." << endl;
+}
+Rectangle::Rectangle(const Rectangle &r) {
+    length = r.length;
+    width = r.width;
+    cout << "Copy constructor called." << endl;
+}
+Rectangle::~Rectangle() {
+    cout << "Destructor called for rectangle with length: " << length << " and width: " << width << endl;
+}
+double Rectangle::getLength() const {
+    return length;
+}
+double Rectangle::getWidth() const {
+    return width;
+}
+double Rectangle::getArea() const {
+    return length * width;
+}
+double Rectangle::getPerimeter() const {
+    return 2 * (length + width);
+}
+void Rectangle::setLength(double value) {
+    length = value;
+}
+void Rectangle::setWidth(double value) {
+    width = value;
+}
 
 //Constructor implementations
 Circle::Circle(double r) {
@@ -33,6 +88,7 @@ Circle::Circle() : radius(0.0) { // Default radius is 1.0
 }
 
 Circle::Circle(const Circle &c) {
+    cout << &c << " is being copied." << endl;
     radius = c.radius;
     cout << "Copy constructor called." << endl;
 }
@@ -73,6 +129,11 @@ int main() {
     Circle c3(c1); // Copy constructor
     cout << "Radius: " << c3.getRadius() << endl;
 
+    Rectangle r1(5, 10); // Parameterized constructor
+    cout << "Length: " << r1.getLength() << ", Width: " << r1.getWidth() << endl;
+
+    c1.setRadius(15);
+    cout << "Updated Radius: " << c1.getRadius() << endl;
 
     return 0;
 }
