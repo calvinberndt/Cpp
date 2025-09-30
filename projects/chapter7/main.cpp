@@ -4,6 +4,8 @@ using namespace std;
 class HelloWorld {
 public:
 
+    int a = 1;
+
     void greet() {
         cout << "Hello, World!" << endl;
     }
@@ -51,6 +53,7 @@ int main() {
     hw.privateGreeting();
     hw.exposeSecret();
     hw.unusedMethod();
+    cout << "This is the value of a: " << hw.a << endl;
     return 0;
 
 }
