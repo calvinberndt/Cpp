@@ -2,7 +2,7 @@
 #define EMPLOYEE_H
 #include <iostream>
 #include <string>
-
+using namespace std;
 //ID Generator Class for ID Generator
 
 class Employee {

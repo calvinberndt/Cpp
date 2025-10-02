@@ -1,12 +1,16 @@
 #include <iostream>
 #include "../headers/employee.h"
+
+std::string Employee::getName() const {
+    return name;
+}
 #include <string>
 using namespace std;
 
 int Employee::id = 1000;
 
 Employee::Employee(string name) : name(name) {
-    cout << "Employee " << name << " created." << endl;
+    cout << "Employee Name: " << name << " ID: " << id << endl;
     addID(*this);
 }
 
@@ -23,18 +27,16 @@ int Employee::getID(){
 }
 
 Employee::Employee() : name("No Name") {
-    cout << "Employee " << name << " created." << endl;
+    cout << "Employee Name: " << name << " ID: " << id << endl;
     addID(*this);
 } 
 
 Employee::Employee(const Employee &e) : name(e.name) {
-    cout << "Employee " << name << " created by copy." << endl;
+    cout << "Employee Name: " << name << " ID: " << id << endl;
     addID(*this);
 }
 
 Employee::~Employee() {
-    cout << "Employee "  << name << "destroyed," << "with the ID of" << getID << endl;
+    cout << "Employee Name: " << name << " ID: " << id << " destroyed." << endl;
     subtractID(*this);
-    
 }
-
