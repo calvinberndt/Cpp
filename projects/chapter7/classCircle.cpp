@@ -21,6 +21,9 @@ class Circle {
 
 class Rectangle {
     private:
+    // Static memebers are shared among all objects of the class
+    // This static memeber is not constructed for each object, because it is shared.
+        static const string shapename;
         double length;
         double width;
     public:
@@ -38,13 +41,32 @@ class Rectangle {
         double getPerimeter() const;
         void setLength(double value);
         void setWidth(double value);
+
+        static string getShapeName();
 };
 
 
+//Initialize the static member outside the class
+const string Rectangle::shapename = "Rectangle";
+
+// Definition of the static method
+string Rectangle::getShapeName() {
+    return shapename;
+}
+
+
 // Implementations of the Rectangle class methods
-Rectangle::Rectangle(double l, double w) {
-    length = l;
-    width = w;
+Rectangle::Rectangle(double l, double w) : length (l), width(w) { //Parameterized constructor
+// Set parameters that the length and width has to be greater than or equal to 0
+//This is callled call invariant
+    if (length < 0) {
+        length = 0;
+        cout << "Length cannot be negative. Setting length to 0." << endl;
+    }
+    if (width < 0) {
+        width = 0;
+        cout << "Width cannot be negative. Setting width to 0." << endl;
+    }
     cout << "Parameterized constructor called." << endl;
 }
 Rectangle::Rectangle() : length(1.0), width(1.0) { // Default length and width is 1.0
@@ -134,6 +156,10 @@ int main() {
 
     c1.setRadius(15);
     cout << "Updated Radius: " << c1.getRadius() << endl;
+
+    cout << "Shape Name: " << Rectangle::getShapeName() << endl; // Static method call through the class
+    //or another way to get the shape name:
+    cout << "Shape Name: " << r1.getShapeName() << endl; // Static method call through an object
 
     return 0;
 }

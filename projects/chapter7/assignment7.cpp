@@ -22,7 +22,7 @@ class Car {
 
 Car::Car(char make, char model, unsigned int year){
     cout << "Parameterized constructor called." << endl;
-    this->make = make;
+    this->make = make; //give access to private members
     this->model = model;
     this->year = year;
 };
