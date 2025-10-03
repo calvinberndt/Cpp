@@ -20,7 +20,6 @@ class Employee {
 
         string getName() const;
         void static addID(Employee &e);
-        static int getID();
         void static subtractID(Employee &e);
 
 };

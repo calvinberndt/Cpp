@@ -40,9 +40,7 @@ void Employee::subtractID(Employee &e) {
     unusedIds.push_back(e.empID);
 }
 
-int Employee::getID(){
-    return id;
-}
+
 
 string Employee::getName() const {
     return name;
