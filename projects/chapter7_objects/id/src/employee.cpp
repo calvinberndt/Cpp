@@ -4,16 +4,17 @@
 using namespace std;
 
 int Employee::id = 1000;
+list<int> Employee::unusedIds;
 
 Employee::Employee(string name) : name(name) {
     addID(*this);
-    cout << "Employee Name: " << name << " ID: " << id << endl;
+    cout << "Employee Name: " << name << " ID: " << empID << endl;
 }
 
 Employee::Employee() : name("No Name") {
     addID(*this);
-    cout << "Employee Name: " << name << " ID: " << id << endl;
-} 
+    cout << "Employee Name: " << name << " ID: " << empID << endl;
+}
 
 Employee::Employee(const Employee &e) : name(e.name) {
     addID(*this);
