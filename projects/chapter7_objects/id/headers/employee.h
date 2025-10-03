@@ -12,6 +12,10 @@ class Employee {
         static int id;
         static list<int> unusedIds;
         int empID;
+
+        void static addID(Employee &e);
+        void static subtractID(Employee &e);
+        
     public:
         Employee(string name);
         Employee();
@@ -19,8 +23,7 @@ class Employee {
         ~Employee();
 
         string getName() const;
-        void static addID(Employee &e);
-        void static subtractID(Employee &e);
+        
 
 };
 
