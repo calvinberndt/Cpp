@@ -65,10 +65,10 @@ int main() {
 
     //Take input from the from the user  for them to declare the the Matrix sizes.
 
-    const short unsigned int M = 2, N = 3, P = 2;
+    const short unsigned int M = 3, N = 3, P = 2;
     int matrixA[M][N];
     int matrixB[N][P];
-    int matrixC[M][P];
+    int matrixC[M][P] = {}; //must initilize otherwise we obtian garbage values.
     cout << "We are going to be doing matrix multiplication. Fill in matrix A:" << endl;
     for(short unsigned int m=0; m < M; m++){
         for(short unsigned int n =0; n < N; n++){
