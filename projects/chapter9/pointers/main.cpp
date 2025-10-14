@@ -79,6 +79,34 @@ int main() {
     cout << "Value of d after changing value through pC: " << d << endl;
     cout << "Value of using &pC: " << &pC << endl; //address of constant pointer variable
     cout << "Value of using &d: " << &d << endl; //address of variable d
+
+
+    //Pointer points to null
+    cout << "------------------------" << endl;
+    cout << "Pointer points to null:" << endl;
+    int* pD = 0; //pointer initialized to null
+    if(pD)
+    {
+        cout << "pD is a null pointer." << endl;
+    }
+    else
+    {
+        cout << "pD is not a null pointer." << endl;
+    }
+
+
+    //Pass By Pointer to a Function
+    cout << "------------------------" << endl;
+    cout << "Pass By Pointer to a Function:" << endl;
+    int arr[] = {1,2,3,4,5};
+
+    //Print the location of the array
+    cout << "Address of array: " << arr << endl; //array name decays
+    int size = sizeof(arr)/sizeof(arr[0]);
+    int sum = getSum(arr, size); //array name decays to pointer to first element
+    cout << "Sum of array elements: " << sum << endl;   
+
+
     return 0;
 
 }
