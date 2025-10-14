@@ -4,19 +4,18 @@ using namespace std;
 //pass by pointer and return by pointer.
 float* findLargest(float* num1, float* num2, float*num3){
 
-    float largestFloat = *num1;
-    float* pt;
+    float* largestFloat = num1;
 
-    if(largestFloat < *num2){
-        largestFloat = *num2;
+    if(*largestFloat < *num2){
+        largestFloat = num2;
     }
-    if(largestFloat < *num3){
-        largestFloat = *num3;
+    if(*largestFloat < *num3){
+        largestFloat = num3;
     };
 
 
 
-    return pt = &largestFloat;
+    return largestFloat;
 }
 
 int main() {
