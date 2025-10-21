@@ -152,5 +152,23 @@ int main() {
         cout << endl;
     }
 
+    //Deallocate memory for matrix 1
+    for(int i = 0; i < rows1; i++){
+        delete[] matrix1[i];
+    }
+
+    delete[] matrix1;
+    //Deallocate memory for matrix 2
+    for(int i = 0; i < rows2; i++){
+        delete[] matrix2[i];
+    }
+
+    delete[] matrix2;
+    //Deallocate memory for matrix 3
+    for(int i = 0; i < rows1; i++){
+        delete[] matrix3[i];
+    }
+    
+    delete[] matrix3;
     return 0;
 }
