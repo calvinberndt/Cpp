@@ -1,9 +1,9 @@
 #include <iostream>
 using namespace std;
 
+//this is the function prototype
 void multiplyMatrices(int(*A)[10], int(*B)[10],
                       int(*C)[10], int m, int n, int p);
-
 
 
 int main() {
