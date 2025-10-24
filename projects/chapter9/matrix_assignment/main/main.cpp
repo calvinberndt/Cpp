@@ -58,6 +58,12 @@ int main() {
 //define the function
 void multiplyMatrices(int(*A)[10], int(*B)[10], int(*C)[10], int m, int n, int p) {
 
+
+    cout << "C (pointer to row)       : " << C << endl;
+    cout << "&C[0] (address of row 0) : " << (&C[0]) << endl;
+    cout << "&C[0][0] (first element) : " << &C[0][0] << endl;
+    cout << "(*C) decayed (first elem): " << (*C) << endl;
+
     for(int i=0; i < m; i++){
         for(int j=0; j < p; j++){
             C[i][j] = 0; //remove junk values in matrixC so we can do math
