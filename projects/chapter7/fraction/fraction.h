@@ -4,8 +4,8 @@
 
 class Fraction {
 private:
-    int nume;
-    int denom;
+    int numerator;
+    int denominator;
 
 public:
     Fraction();
@@ -23,6 +23,5 @@ private:
     void normalize();
     int gcd(int n, int d);
 };
-
 
 #endif
