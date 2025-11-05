@@ -47,6 +47,7 @@ int main() {
         }
         cout << endl;
     }
+
     delete[] matrix1;
     delete[] matrix2;
     delete[] matrix3;
