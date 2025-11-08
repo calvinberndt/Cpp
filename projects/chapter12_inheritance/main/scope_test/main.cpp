@@ -5,7 +5,8 @@ int main() {
     int scope_num = 0;
     for(int i = 0; i < 5; i++){
         if(i == 4) {
-            scope_num = 1;
+            int scope_num = 2;
+            cout << scope_num << endl;
         }
         cout << scope_num << endl;
     }
