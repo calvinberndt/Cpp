@@ -2,6 +2,7 @@
 using namespace std;
 
 //shape is a virtual function whos implementation is provided by the derived classes.
+//shape acts like an interface for the derived classes.
 class Shape {
     protected:
         virtual bool isValid() const = 0; //pure virtual function, since it is equal to 0.
