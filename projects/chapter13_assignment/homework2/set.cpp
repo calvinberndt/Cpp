@@ -76,24 +76,35 @@ void Set::operator+=(int n) {
 }
 
 void Set::operator-=(int n) {
-    int* newElements = new int[numElements-1];
-    int flag = -1; //sentinel value
-
-
+    int foundIndex = -1;
+    
+    // 1. Check if the n exists in the set
     for(int i = 0; i < numElements; i++){
         if(elements[i] == n) {
-            flag = i;
-            cout << "Your element:" << n <<  " was found at index: " << i << endl;
+            foundIndex = i;
             break;
         }
     }
-    for(int i = 0; i < numElements-1; i++){
-        if(i == flag){
-            continue;
-        }
-        newElements[i] = elements[i];
+
+    // If not found, do nothing and return
+    if (foundIndex == -1) {
+        cout << "Element " << n << " not found in set." << endl;
+        return;
     }
 
+    // 2. Create new smaller array
+    int* newElements = new int[numElements - 1];
+    
+    // 3. Copy everything EXCEPT the found index
+    // We need two counters: i for the old array, j for the new array
+    for(int i = 0, j = 0; i < numElements; i++){
+        if(i != foundIndex){
+            newElements[j] = elements[i];
+            j++;
+        }
+    }
+
+    // 4. Swap and cleanup
     delete[] elements;
     elements = newElements;
     numElements--;
