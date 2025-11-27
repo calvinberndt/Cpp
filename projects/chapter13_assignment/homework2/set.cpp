@@ -17,6 +17,38 @@ Set::~Set() {
     delete[] elements;
 }
 
+// Copy Constructor: Creates a deep copy of 'other'
+Set::Set(const Set& other) {
+    numElements = other.numElements;
+    if (numElements > 0) {
+        elements = new int[numElements];
+        for (int i = 0; i < numElements; i++) {
+            elements[i] = other.elements[i];
+        }
+    } else {
+        elements = nullptr;
+    }
+}
+
+// Copy Assignment Operator: Handles assignment safely (e.g., A = B)
+const Set& Set::operator=(const Set& other) {
+    if (this != &other) { // 1. Check for self-assignment
+        delete[] elements; // 2. Free existing memory
+        
+        // 3. Deep copy the data
+        numElements = other.numElements;
+        if (numElements > 0) {
+            elements = new int[numElements];
+            for (int i = 0; i < numElements; i++) {
+                elements[i] = other.elements[i];
+            }
+        } else {
+            elements = nullptr;
+        }
+    }
+    return *this;
+}
+
 void Set::printSet() {
     for(int i = 0; i < numElements ; i++){
         cout << elements[i] << " ";
@@ -92,7 +124,7 @@ Set operator-(const Set& a, const Set&b) {
                 break;
             }
         }
-        if(inB == false){
+        if(!inB){
             result+=a.elements[i];
         }
     }
@@ -109,7 +141,7 @@ Set operator*(const Set& a, const Set& b){
                 break;
             }
         }
-        if(inB == true){
+        if(inB){
             result+=a.elements[i];
         }
     }

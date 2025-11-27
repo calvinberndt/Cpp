@@ -21,6 +21,10 @@ class Set {
         void operator+=(int n);
         void operator-=(int n);
 
+        // Rule of Three (Safety)
+        Set(const Set& other); // Copy Constructor
+        const Set& operator=(const Set& other); // Copy Assignment Operator
+
         // this is where we're going to make our friends. 
         // this is the section where we grant permission for the friend to access Set's private fields
         // They will be declared outside of class set. Not within it because they are not of typeset functions. 
