@@ -44,23 +44,74 @@ void Set::operator+=(int n) {
 }
 
 void Set::operator-=(int n) {
-    //create a sentinel value to check if n is in the array
     int* newElements = new int[numElements-1];
-    int flag = 0; //use this to check if the element was in the array
+    int flag = -1; //sentinel value
+
 
     for(int i = 0; i < numElements; i++){
         if(elements[i] == n) {
-            flag = -1;
-            cout << "Your element was found at index: " << i << endl;
+            flag = i;
+            cout << "Your element:" << n <<  " was found at index: " << i << endl;
+            break;
+        }
+    }
+    for(int i = 0; i < numElements-1; i++){
+        if(i == flag){
             continue;
         }
         newElements[i] = elements[i];
     }
-    
+
     delete[] elements;
     elements = newElements;
-    if(flag == -1){
-        numElements--;
-    }
+    numElements--;
+}
 
+//Add all items
+Set operator+(const Set& a, const Set&b) {
+    Set result;
+    for(int i=0; i < a.numElements; i++){
+        //the += operator already adds one to the length of the array
+        //add adds the value to the array
+        result+=a.elements[i];
+    }
+    for(int i = 0; i < b.numElements; i++){
+        result+=b.elements[i];
+    }
+    return result;
+}
+
+//Only add to result if it does not exist in b.
+Set operator-(const Set& a, const Set&b) {
+    Set result;
+    for(int i = 0; i < a.numElements; i++){
+        bool inB = false;
+        for(int j = 0; j < b.numElements; j++){
+            if(a.elements[i] == b.elements[j]){
+                inB = true;
+                break;
+            }
+        }
+        if(inB == false){
+            result+=a.elements[i];
+        }
+    }
+    return result;
+}
+
+Set operator*(const Set& a, const Set& b){
+    Set result;
+    for(int i = 0; i < a.numElements; i++){
+        bool inB = false;
+        for(int j = 0; j < b.numElements; j++){
+            if(a.elements[i] == b.elements[j]){
+                inB = true;
+                break;
+            }
+        }
+        if(inB == true){
+            result+=a.elements[i];
+        }
+    }
+    return result;
 }
