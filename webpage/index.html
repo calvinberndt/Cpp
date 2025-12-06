@@ -103,50 +103,28 @@
             transform: translateY(0);
         }
 
-        /* Click to reveal */
-        .click-reveal {
-            cursor: pointer;
-            position: relative;
-        }
-        .click-reveal::after {
-            content: 'Click to reveal';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(56, 189, 248, 0.9);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-            z-index: 10;
-        }
-        .click-reveal.revealed::after {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .click-reveal > .hidden-content {
+        /* Scroll reveal with blur effect */
+        .reveal-blur {
             opacity: 0;
             filter: blur(8px);
-            transition: opacity 0.5s ease, filter 0.5s ease;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
         }
-        .click-reveal.revealed > .hidden-content {
+        .reveal-blur.active {
             opacity: 1;
             filter: blur(0);
+            transform: translateY(0);
         }
 
-        /* Step-by-step reveal */
+        /* Step-by-step reveal - scroll triggered */
         .step-item {
-            opacity: 0.3;
-            transform: scale(0.95);
-            transition: all 0.4s ease;
-            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+            transition: all 0.5s ease;
         }
         .step-item.active {
             opacity: 1;
-            transform: scale(1);
+            transform: scale(1) translateY(0);
             box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
         }
         .step-item:hover {
@@ -458,7 +436,7 @@
                             </div>
                         </div>
 
-                        <!-- ROW 1: BankSystem (Facade) - Click to reveal -->
+                        <!-- ROW 1: BankSystem (Facade) -->
                         <div class="flex justify-center mb-8">
                             <div class="step-item class-card w-80 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-amber-500/50 rounded-xl p-5 shadow-lg shadow-amber-900/20" data-step="1">
                                 <div class="flex items-center justify-between mb-2">
@@ -466,7 +444,7 @@
                                     <div class="px-2 py-0.5 bg-amber-500/20 rounded text-[10px] text-amber-300">Container</div>
                                 </div>
                                 <div class="font-bold text-xl text-white">BankSystem</div>
-                                <div class="step-details hidden mt-3">
+                                <div class="step-details mt-3">
                                     <div class="border-t border-amber-500/30 pt-3"></div>
                                     <div class="text-left text-xs text-slate-300 font-mono space-y-1">
                                         <div class="text-amber-300">- users: User**</div>
@@ -481,7 +459,6 @@
                                         <div>+ loadUsersFromFile()</div>
                                     </div>
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
                             </div>
                         </div>
 
@@ -507,7 +484,7 @@
                                     <div class="px-2 py-0.5 bg-cyan-500/20 rounded text-[10px] text-cyan-300">Base Class</div>
                                 </div>
                                 <div class="font-bold text-xl text-white">Person</div>
-                                <div class="step-details hidden mt-3">
+                                <div class="step-details mt-3">
                                     <div class="border-t border-cyan-500/30 pt-3"></div>
                                     <div class="text-left text-xs text-slate-300 font-mono space-y-1">
                                         <div class="text-cyan-300"># name: string</div>
@@ -520,7 +497,6 @@
                                         <div class="text-violet-300">+ authenticate() = 0</div>
                                     </div>
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
                             </div>
                         </div>
 
@@ -545,7 +521,7 @@
                                     <div class="px-2 py-0.5 bg-emerald-500/20 rounded text-[10px] text-emerald-300">Derived</div>
                                 </div>
                                 <div class="font-bold text-xl text-white">User</div>
-                                <div class="step-details hidden mt-3">
+                                <div class="step-details mt-3">
                                     <div class="border-t border-emerald-500/30 pt-3"></div>
                                     <div class="text-left text-xs text-slate-300 font-mono space-y-1">
                                         <div class="text-emerald-300">- account: BankAccount*</div>
@@ -557,7 +533,6 @@
                                         <div class="text-violet-300">+ displayDetails() override</div>
                                     </div>
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
                             </div>
 
                             <!-- BankManager Class -->
@@ -567,7 +542,7 @@
                                     <div class="px-2 py-0.5 bg-violet-500/20 rounded text-[10px] text-violet-300">Derived</div>
                                 </div>
                                 <div class="font-bold text-xl text-white">BankManager</div>
-                                <div class="step-details hidden mt-3">
+                                <div class="step-details mt-3">
                                     <div class="border-t border-violet-500/30 pt-3"></div>
                                     <div class="text-left text-xs text-slate-500 italic">// inherits name, password</div>
                                     <div class="border-t border-violet-500/30 mt-3 pt-3"></div>
@@ -577,7 +552,6 @@
                                         <div>+ accessAllUserData()</div>
                                     </div>
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
                             </div>
                         </div>
 
@@ -603,7 +577,7 @@
                                     <div class="px-2 py-0.5 bg-emerald-500/20 rounded text-[10px] text-emerald-300">Owned by User</div>
                                 </div>
                                 <div class="font-bold text-xl text-white">BankAccount</div>
-                                <div class="step-details hidden mt-3">
+                                <div class="step-details mt-3">
                                     <div class="border-t border-emerald-500/30 pt-3"></div>
                                     <div class="text-left text-xs text-slate-300 font-mono space-y-1">
                                         <div>- balance: double</div>
@@ -616,7 +590,6 @@
                                         <div class="text-rose-300">+ growTransactionArray()</div>
                                     </div>
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
                                 <div class="absolute -right-8 top-2/3 w-8 h-px bg-emerald-500"></div>
                                 <div class="absolute -right-2 top-2/3 w-3 h-3 bg-emerald-500 rotate-45 -translate-y-1/2"></div>
                             </div>
@@ -625,7 +598,7 @@
                             <div class="step-item class-card w-64 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-600 rounded-xl p-5 shadow-lg mt-16" data-step="6">
                                 <div class="text-xs text-slate-400 font-mono mb-2">«Value Type»</div>
                                 <div class="font-bold text-lg text-white">Transaction</div>
-                                <div class="step-details hidden mt-3">
+                                <div class="step-details mt-3">
                                     <div class="border-t border-slate-600 pt-3"></div>
                                     <div class="text-left text-xs text-slate-300 font-mono space-y-1">
                                         <div>- type: TransactionType</div>
@@ -637,7 +610,6 @@
                                         <div class="text-xs text-slate-300">DEPOSIT | WITHDRAWAL</div>
                                     </div>
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
                             </div>
                         </div>
 
@@ -683,17 +655,15 @@
                     </h3>
 
                     <div class="space-y-4">
-                        <div class="bg-slate-900 rounded-lg p-4 border border-cyan-500/30 click-reveal">
-                            <div class="hidden-content">
-                                <div class="text-cyan-400 font-mono text-sm mb-3">Person (Abstract)</div>
-                                <div class="grid grid-cols-2 gap-2 text-xs font-mono stagger-children">
-                                    <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">virtual ~Person()</div>
-                                    <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
-                                    <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">displayDetails()</div>
-                                    <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
-                                    <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">authenticate()</div>
-                                    <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
-                                </div>
+                        <div class="bg-slate-900 rounded-lg p-4 border border-cyan-500/30 reveal-blur">
+                            <div class="text-cyan-400 font-mono text-sm mb-3">Person (Abstract)</div>
+                            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                                <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">virtual ~Person()</div>
+                                <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
+                                <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">displayDetails()</div>
+                                <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
+                                <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">authenticate()</div>
+                                <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
                             </div>
                         </div>
 
@@ -726,25 +696,21 @@
                     </h3>
 
                     <div class="space-y-4">
-                        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-lg relative click-reveal">
+                        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-lg relative reveal-blur">
                             <div class="absolute -top-3 left-4 bg-slate-900 px-2 text-xs text-red-400 font-bold">WITHOUT virtual ~Person()</div>
-                            <div class="hidden-content">
-                                <div class="code-block p-3 rounded font-mono text-xs mt-2">
-                                    <div class="text-slate-400">Person* p = new User("Alice", "pwd", 100);</div>
-                                    <div class="text-red-400">delete p; // Only calls ~Person()</div>
-                                    <div class="text-red-500 font-bold mt-2">// MEMORY LEAK! account never deleted</div>
-                                </div>
+                            <div class="code-block p-3 rounded font-mono text-xs mt-2">
+                                <div class="text-slate-400">Person* p = new User("Alice", "pwd", 100);</div>
+                                <div class="text-red-400">delete p; // Only calls ~Person()</div>
+                                <div class="text-red-500 font-bold mt-2">// MEMORY LEAK! account never deleted</div>
                             </div>
                         </div>
 
-                        <div class="bg-emerald-900/20 border border-emerald-500/30 p-4 rounded-lg relative click-reveal">
+                        <div class="bg-emerald-900/20 border border-emerald-500/30 p-4 rounded-lg relative reveal-blur">
                             <div class="absolute -top-3 left-4 bg-slate-900 px-2 text-xs text-emerald-400 font-bold">WITH virtual ~Person()</div>
-                            <div class="hidden-content">
-                                <div class="code-block p-3 rounded font-mono text-xs mt-2">
-                                    <div class="text-slate-400">Person* p = new User("Alice", "pwd", 100);</div>
-                                    <div class="text-emerald-400">delete p; // Calls ~User() first</div>
-                                    <div class="text-emerald-500 font-bold mt-2">// SAFE! No memory leak</div>
-                                </div>
+                            <div class="code-block p-3 rounded font-mono text-xs mt-2">
+                                <div class="text-slate-400">Person* p = new User("Alice", "pwd", 100);</div>
+                                <div class="text-emerald-400">delete p; // Calls ~User() first</div>
+                                <div class="text-emerald-500 font-bold mt-2">// SAFE! No memory leak</div>
                             </div>
                         </div>
                     </div>
@@ -762,7 +728,7 @@
             </div>
 
             <div class="glass-card rounded-2xl p-8 reveal">
-                <h3 class="text-xl font-bold text-white mb-6">Ownership Chain <span class="text-xs text-slate-400">(Click each block to trace)</span></h3>
+                <h3 class="text-xl font-bold text-white mb-6">Ownership Chain</h3>
 
                 <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8">
                     <div class="flex-1 space-y-4">
@@ -862,32 +828,32 @@
                     <div class="space-y-4">
                         <div class="bg-slate-900 rounded-lg p-4 border border-emerald-500/30">
                             <div class="text-emerald-400 font-mono text-sm mb-3">User Class</div>
-                            <div class="space-y-2 stagger-children">
-                                <div class="code-block p-2 rounded text-xs font-mono click-reveal">
-                                    <div class="hidden-content">
-                                        <div class="text-slate-500">// 1. Constructor</div>
-                                        <div class="text-emerald-300">User::User(<span class="text-cyan-300">const string&</span> name, <span class="text-cyan-300">const string&</span> password, <span class="text-cyan-300">double</span> initialBalance)</div>
-                                        <div class="text-white ml-4">: Person(name, password),</div>
-                                        <div class="text-white ml-6">account(<span class="text-rose-400">new</span> BankAccount(initialBalance))</div>
-                                        <div class="text-emerald-300">{ }</div>
-                                    </div>
+                            <div class="space-y-3">
+                                <div class="code-block p-3 rounded text-[11px] font-mono reveal-blur">
+                                    <div class="text-slate-500">// 1. Constructor</div>
+                                    <div class="text-emerald-300">User::User(<span class="text-cyan-300">const string&</span> name, <span class="text-cyan-300">const string&</span> password, <span class="text-cyan-300">double</span> initialBalance)</div>
+                                    <div class="text-amber-300 ml-4">: Person(name, password),</div>
+                                    <div class="text-amber-300 ml-6">account(<span class="text-rose-400">new</span> BankAccount(initialBalance))</div>
+                                    <div class="text-emerald-300">{</div>
+                                    <div class="text-white ml-4">cout << <span class="text-amber-200">"User created: "</span> << getName() << endl;</div>
+                                    <div class="text-emerald-300">}</div>
                                 </div>
-                                <div class="code-block p-2 rounded text-xs font-mono click-reveal">
-                                    <div class="hidden-content">
-                                        <div class="text-slate-500">// 2. Copy Constructor (DEEP COPY)</div>
-                                        <div class="text-emerald-300">User::User(<span class="text-cyan-300">const User&</span> orig)</div>
-                                        <div class="text-white ml-4">: Person(orig),</div>
-                                        <div class="text-white ml-6">account(orig.account ? <span class="text-rose-400">new</span> BankAccount(*orig.account) : <span class="text-violet-400">nullptr</span>)</div>
-                                        <div class="text-emerald-300">{ }</div>
-                                    </div>
+                                <div class="code-block p-3 rounded text-[11px] font-mono reveal-blur">
+                                    <div class="text-slate-500">// 2. Copy Constructor — deep copy the owned BankAccount</div>
+                                    <div class="text-emerald-300">User::User(<span class="text-cyan-300">const User&</span> orig)</div>
+                                    <div class="text-amber-300 ml-4">: Person(orig),</div>
+                                    <div class="text-amber-300 ml-6">account(orig.account ? <span class="text-rose-400">new</span> BankAccount(*orig.account) : <span class="text-violet-400">nullptr</span>)</div>
+                                    <div class="text-emerald-300">{</div>
+                                    <div class="text-white ml-4">cout << <span class="text-amber-200">"User copied: "</span> << orig.getName() << endl;</div>
+                                    <div class="text-emerald-300">}</div>
                                 </div>
-                                <div class="code-block p-2 rounded text-xs font-mono click-reveal">
-                                    <div class="hidden-content">
-                                        <div class="text-slate-500">// 3. Destructor</div>
-                                        <div class="text-emerald-300">User::~User() {</div>
-                                        <div class="text-white ml-4"><span class="text-rose-400">delete</span> account;</div>
-                                        <div class="text-emerald-300">}</div>
-                                    </div>
+                                <div class="code-block p-3 rounded text-[11px] font-mono reveal-blur">
+                                    <div class="text-slate-500">// 3. Destructor — free owned BankAccount</div>
+                                    <div class="text-emerald-300">User::~User()</div>
+                                    <div class="text-emerald-300">{</div>
+                                    <div class="text-white ml-4"><span class="text-rose-400">delete</span> account;</div>
+                                    <div class="text-white ml-4">cout << <span class="text-amber-200">"User destroyed: "</span> << getName() << endl;</div>
+                                    <div class="text-emerald-300">}</div>
                                 </div>
                             </div>
                         </div>
@@ -953,9 +919,9 @@
             <div class="glass-card rounded-2xl p-6 reveal">
                 <h3 class="text-xl font-bold text-white mb-6">Deep Copy vs Shallow Copy</h3>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-red-900/20 border border-red-500/30 p-5 rounded-lg relative click-reveal">
+                    <div class="bg-red-900/20 border border-red-500/30 p-5 rounded-lg relative reveal-blur">
                         <div class="absolute -top-3 left-4 bg-slate-900 px-2 text-xs text-red-400 font-bold">SHALLOW (DANGER)</div>
-                        <div class="hidden-content mt-2 space-y-4">
+                        <div class="mt-2 space-y-4">
                             <div class="flex items-center justify-around text-sm">
                                 <div class="text-center">
                                     <div class="border border-slate-600 p-3 rounded bg-slate-800">userA</div>
@@ -973,9 +939,9 @@
                         </div>
                     </div>
 
-                    <div class="bg-emerald-900/20 border border-emerald-500/30 p-5 rounded-lg relative click-reveal">
+                    <div class="bg-emerald-900/20 border border-emerald-500/30 p-5 rounded-lg relative reveal-blur">
                         <div class="absolute -top-3 left-4 bg-slate-900 px-2 text-xs text-emerald-400 font-bold">DEEP (SAFE)</div>
-                        <div class="hidden-content mt-2 space-y-4">
+                        <div class="mt-2 space-y-4">
                             <div class="flex items-center justify-around text-sm">
                                 <div class="text-center">
                                     <div class="border border-slate-600 p-3 rounded bg-slate-800">userA</div>
@@ -1297,15 +1263,20 @@
         // ============================================
         // SCROLL REVEAL ANIMATIONS
         // ============================================
-        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .stagger-children');
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-blur, .stagger-children, .step-item');
 
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
+                    // Reposition composition line when step-items reveal
+                    if (entry.target.classList.contains('step-item')) {
+                        setTimeout(positionCompositionLine, 100);
+                        setTimeout(positionCompositionLine, 500);
+                    }
                 }
             });
-        }, { threshold: 0.1, rootMargin: '-50px' });
+        }, { threshold: 0.15, rootMargin: '-30px' });
 
         revealElements.forEach(el => revealObserver.observe(el));
 
@@ -1378,34 +1349,6 @@
             const newIndex = Math.max(0, Math.min(sections.length - 1, currentSectionIndex + direction));
             sections[newIndex]?.scrollIntoView({ behavior: 'smooth' });
         }
-
-        // ============================================
-        // CLICK TO REVEAL
-        // ============================================
-        document.querySelectorAll('.click-reveal').forEach(el => {
-            el.addEventListener('click', () => {
-                el.classList.add('revealed');
-                el.querySelector('.stagger-children')?.classList.add('active');
-            });
-        });
-
-        // ============================================
-        // STEP-BY-STEP CLASS CARDS
-        // ============================================
-        document.querySelectorAll('.step-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const details = item.querySelector('.step-details');
-                const hint = item.querySelector('.step-hint');
-                if (details) {
-                    details.classList.toggle('hidden');
-                    if (hint) hint.textContent = details.classList.contains('hidden') ? 'Click to expand' : 'Click to collapse';
-                }
-                item.classList.toggle('active');
-                // Reposition composition line after card expands/collapses
-                setTimeout(positionCompositionLine, 50);
-                setTimeout(positionCompositionLine, 400);
-            });
-        });
 
         // ============================================
         // EXPANDABLE SECTIONS
