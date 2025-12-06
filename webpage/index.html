@@ -1196,8 +1196,8 @@
                                     <span class="px-3 py-1 bg-blue-500/20 border border-blue-500/50 rounded text-blue-300 text-xs font-bold">STACK</span>
                                     <div class="text-[10px] text-slate-500 mt-1">Automatic allocation</div>
                                 </div>
-                                <div id="stack-memory" class="space-y-2 border-2 border-blue-500/30 rounded-lg p-3 bg-slate-900/50 min-h-[280px]">
-                                    <!-- Stack frames will be animated here -->
+                                <div id="stack-memory" class="flex flex-col-reverse gap-2 border-2 border-blue-500/30 rounded-lg p-3 bg-slate-900/50 min-h-[280px]">
+                                    <!-- Stack frames - displayed bottom-to-top (main at bottom) -->
                                     <div class="stack-frame opacity-0 transition-all duration-500" data-frame="1">
                                         <div class="text-[10px] text-blue-400 mb-1">main()</div>
                                         <div class="bg-blue-900/30 border border-blue-500/40 rounded p-2">
@@ -1369,9 +1369,59 @@
                             </div>
                         </div>
 
-                        <button id="animate-heap-alloc" class="w-full py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded text-cyan-300 text-xs transition-colors">
-                            ▶ Animate Allocation
-                        </button>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="step-alloc" class="py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded text-cyan-300 text-xs transition-colors">
+                                ▶ Step Allocate <span id="alloc-step-counter">(0/5)</span>
+                            </button>
+                            <button id="reset-alloc" class="py-2 bg-slate-500/20 hover:bg-slate-500/30 border border-slate-500/50 rounded text-slate-300 text-xs transition-colors">
+                                ↺ Reset
+                            </button>
+                        </div>
+
+                        <h4 class="text-sm font-bold text-white mt-4">Deallocation Sequence</h4>
+                        <div class="bg-slate-900 rounded-xl p-4 border border-slate-700 overflow-x-auto">
+                            <div id="heap-dealloc-code" class="code-block font-mono text-[11px] space-y-1">
+                                <div class="dealloc-line opacity-30 transition-opacity" data-step="1">
+                                    <span class="text-slate-500">// 1. ~BankAccount() destructor</span>
+                                </div>
+                                <div class="dealloc-line opacity-30 transition-opacity" data-step="1">
+                                    <span class="text-rose-400">delete[]</span> transactionHistory;
+                                </div>
+                                <div class="dealloc-line opacity-30 transition-opacity" data-step="2">
+                                    <span class="text-slate-500">// 2. ~User() destructor</span>
+                                </div>
+                                <div class="dealloc-line opacity-30 transition-opacity" data-step="2">
+                                    <span class="text-rose-400">delete</span> account;
+                                </div>
+                                <div class="dealloc-line opacity-30 transition-opacity" data-step="3">
+                                    <span class="text-slate-500">// 3. ~BankSystem() destructor loop</span>
+                                </div>
+                                <div class="dealloc-line opacity-30 transition-opacity" data-step="3">
+                                    <span class="text-rose-400">delete</span> users[i]; <span class="text-slate-500">// each User</span>
+                                </div>
+                                <div class="dealloc-line opacity-30 transition-opacity" data-step="4">
+                                    <span class="text-slate-500">// 4. ~BankSystem() cleanup</span>
+                                </div>
+                                <div class="dealloc-line opacity-30 transition-opacity" data-step="4">
+                                    <span class="text-rose-400">delete[]</span> users;
+                                </div>
+                                <div class="dealloc-line opacity-30 transition-opacity" data-step="5">
+                                    <span class="text-slate-500">// 5. Stack unwinds - main() returns</span>
+                                </div>
+                                <div class="dealloc-line opacity-30 transition-opacity" data-step="5">
+                                    <span class="text-slate-400">// BankSystem auto-destroyed</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="step-dealloc" class="py-2 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 rounded text-rose-300 text-xs transition-colors">
+                                ◀ Step Deallocate <span id="dealloc-step-counter">(0/5)</span>
+                            </button>
+                            <button id="reset-dealloc" class="py-2 bg-slate-500/20 hover:bg-slate-500/30 border border-slate-500/50 rounded text-slate-300 text-xs transition-colors">
+                                ↺ Reset
+                            </button>
+                        </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div class="p-3 bg-blue-900/20 rounded border border-blue-500/30 text-xs">
@@ -1693,65 +1743,138 @@
         });
 
         // ============================================
-        // STACK VS HEAP ALLOCATION ANIMATION
+        // STACK VS HEAP - STEP-BY-STEP ANIMATIONS
         // ============================================
-        document.getElementById('animate-heap-alloc')?.addEventListener('click', () => {
-            const stackFrames = document.querySelectorAll('.stack-frame');
-            const heapBlocks = document.querySelectorAll('.heap-block');
-            const allocLines = document.querySelectorAll('.alloc-line');
-            const stackArrows = document.querySelectorAll('.stack-arrow');
-            const heapArrows = document.querySelectorAll('.heap-arrow');
+        let allocStep = 0;
+        let deallocStep = 0;
+        const totalAllocSteps = 5;
+        const totalDeallocSteps = 5;
 
-            // Reset all
+        const stackFrames = document.querySelectorAll('.stack-frame');
+        const heapBlocks = document.querySelectorAll('.heap-block');
+        const allocLines = document.querySelectorAll('.alloc-line');
+        const deallocLines = document.querySelectorAll('.dealloc-line');
+        const stackArrows = document.querySelectorAll('.stack-arrow');
+        const heapArrows = document.querySelectorAll('.heap-arrow');
+        const allocCounter = document.getElementById('alloc-step-counter');
+        const deallocCounter = document.getElementById('dealloc-step-counter');
+
+        function updateAllocCounter() {
+            if (allocCounter) allocCounter.textContent = `(${allocStep}/${totalAllocSteps})`;
+        }
+
+        function updateDeallocCounter() {
+            if (deallocCounter) deallocCounter.textContent = `(${deallocStep}/${totalDeallocSteps})`;
+        }
+
+        function resetAllocation() {
+            allocStep = 0;
             stackFrames.forEach(f => f.classList.add('opacity-0'));
             heapBlocks.forEach(b => b.classList.add('opacity-0'));
             allocLines.forEach(l => { l.classList.remove('opacity-100'); l.classList.add('opacity-30'); });
             stackArrows.forEach(a => a.classList.add('opacity-0'));
             heapArrows.forEach(a => a.classList.add('opacity-0'));
+            updateAllocCounter();
+        }
 
-            let currentStep = 1;
-            const totalSteps = 5;
+        function resetDeallocation() {
+            deallocStep = 0;
+            deallocLines.forEach(l => { l.classList.remove('opacity-100'); l.classList.add('opacity-30'); });
+            // Show all elements (ready for deallocation)
+            stackFrames.forEach(f => f.classList.remove('opacity-0'));
+            heapBlocks.forEach(b => b.classList.remove('opacity-0'));
+            allocLines.forEach(l => { l.classList.remove('opacity-30'); l.classList.add('opacity-100'); });
+            stackArrows.forEach(a => a.classList.remove('opacity-0'));
+            heapArrows.forEach(a => a.classList.remove('opacity-0'));
+            updateDeallocCounter();
+        }
 
-            const animate = () => {
-                if (currentStep <= totalSteps) {
-                    // Highlight code lines for current step
-                    allocLines.forEach(line => {
-                        if (parseInt(line.dataset.step) === currentStep) {
-                            line.classList.remove('opacity-30');
-                            line.classList.add('opacity-100');
-                        }
-                    });
+        // Step Allocation - one click = one step
+        document.getElementById('step-alloc')?.addEventListener('click', () => {
+            if (allocStep >= totalAllocSteps) return; // Already complete
 
-                    // Show corresponding visual elements
-                    if (currentStep === 1) {
-                        // Stack: BankSystem created
-                        stackFrames[0]?.classList.remove('opacity-0');
-                    } else if (currentStep === 2) {
-                        // Heap: User** array
-                        heapBlocks[0]?.classList.remove('opacity-0');
-                        stackArrows[0]?.classList.remove('opacity-0');
-                    } else if (currentStep === 3) {
-                        // Heap: User object
-                        stackFrames[1]?.classList.remove('opacity-0');
-                        heapBlocks[1]?.classList.remove('opacity-0');
-                    } else if (currentStep === 4) {
-                        // Heap: BankAccount
-                        heapBlocks[2]?.classList.remove('opacity-0');
-                        heapArrows[0]?.classList.remove('opacity-0');
-                    } else if (currentStep === 5) {
-                        // Heap: Transaction array
-                        heapBlocks[3]?.classList.remove('opacity-0');
-                        heapBlocks[4]?.classList.remove('opacity-0');
-                        heapArrows[1]?.classList.remove('opacity-0');
-                        stackFrames[2]?.classList.remove('opacity-0');
-                    }
+            allocStep++;
+            updateAllocCounter();
 
-                    currentStep++;
-                    setTimeout(animate, 800);
+            // Highlight code lines for current step
+            allocLines.forEach(line => {
+                if (parseInt(line.dataset.step) === allocStep) {
+                    line.classList.remove('opacity-30');
+                    line.classList.add('opacity-100');
                 }
-            };
-            animate();
+            });
+
+            // Show corresponding visual elements
+            if (allocStep === 1) {
+                // Stack: BankSystem created (main frame)
+                stackFrames[0]?.classList.remove('opacity-0');
+            } else if (allocStep === 2) {
+                // Heap: User** array
+                heapBlocks[0]?.classList.remove('opacity-0');
+                stackArrows[0]?.classList.remove('opacity-0');
+            } else if (allocStep === 3) {
+                // Stack: addUser() frame + Heap: User object
+                stackFrames[1]?.classList.remove('opacity-0');
+                heapBlocks[1]?.classList.remove('opacity-0');
+            } else if (allocStep === 4) {
+                // Heap: BankAccount
+                heapBlocks[2]?.classList.remove('opacity-0');
+                heapArrows[0]?.classList.remove('opacity-0');
+            } else if (allocStep === 5) {
+                // Heap: Transaction array + grows upward indicator
+                heapBlocks[3]?.classList.remove('opacity-0');
+                heapBlocks[4]?.classList.remove('opacity-0');
+                heapArrows[1]?.classList.remove('opacity-0');
+                stackFrames[2]?.classList.remove('opacity-0');
+            }
         });
+
+        // Reset Allocation
+        document.getElementById('reset-alloc')?.addEventListener('click', resetAllocation);
+
+        // Step Deallocation - one click = one step (reverse order)
+        document.getElementById('step-dealloc')?.addEventListener('click', () => {
+            if (deallocStep >= totalDeallocSteps) return; // Already complete
+
+            deallocStep++;
+            updateDeallocCounter();
+
+            // Highlight dealloc code lines for current step
+            deallocLines.forEach(line => {
+                if (parseInt(line.dataset.step) === deallocStep) {
+                    line.classList.remove('opacity-30');
+                    line.classList.add('opacity-100');
+                }
+            });
+
+            // Hide corresponding visual elements (reverse of allocation)
+            if (deallocStep === 1) {
+                // delete[] transactionHistory
+                heapBlocks[3]?.classList.add('opacity-0');
+                heapBlocks[4]?.classList.add('opacity-0');
+                heapArrows[1]?.classList.add('opacity-0');
+            } else if (deallocStep === 2) {
+                // delete account (BankAccount)
+                heapBlocks[2]?.classList.add('opacity-0');
+                heapArrows[0]?.classList.add('opacity-0');
+            } else if (deallocStep === 3) {
+                // delete users[i] (User object)
+                heapBlocks[1]?.classList.add('opacity-0');
+            } else if (deallocStep === 4) {
+                // delete[] users (User** array)
+                heapBlocks[0]?.classList.add('opacity-0');
+                stackArrows[0]?.classList.add('opacity-0');
+                // addUser() frame pops
+                stackFrames[1]?.classList.add('opacity-0');
+                stackFrames[2]?.classList.add('opacity-0');
+            } else if (deallocStep === 5) {
+                // Stack unwinds - main() returns, BankSystem destroyed
+                stackFrames[0]?.classList.add('opacity-0');
+            }
+        });
+
+        // Reset Deallocation
+        document.getElementById('reset-dealloc')?.addEventListener('click', resetDeallocation);
 
         // ============================================
         // COMPOSITION LINE SVG
