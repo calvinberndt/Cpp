@@ -866,23 +866,25 @@
                                 <div class="code-block p-2 rounded text-xs font-mono click-reveal">
                                     <div class="hidden-content">
                                         <div class="text-slate-500">// 1. Constructor</div>
-                                        <div class="text-emerald-300">User(name, pwd, bal) {</div>
-                                        <div class="text-white ml-4">account = <span class="text-rose-400">new</span> BankAccount(bal);</div>
-                                        <div class="text-emerald-300">}</div>
+                                        <div class="text-emerald-300">User::User(<span class="text-cyan-300">const string&</span> name, <span class="text-cyan-300">const string&</span> password, <span class="text-cyan-300">double</span> initialBalance)</div>
+                                        <div class="text-white ml-4">: Person(name, password),</div>
+                                        <div class="text-white ml-6">account(<span class="text-rose-400">new</span> BankAccount(initialBalance))</div>
+                                        <div class="text-emerald-300">{ }</div>
                                     </div>
                                 </div>
                                 <div class="code-block p-2 rounded text-xs font-mono click-reveal">
                                     <div class="hidden-content">
                                         <div class="text-slate-500">// 2. Copy Constructor (DEEP COPY)</div>
-                                        <div class="text-emerald-300">User(const User& orig) {</div>
-                                        <div class="text-white ml-4">account = <span class="text-rose-400">new</span> BankAccount(*orig.account);</div>
-                                        <div class="text-emerald-300">}</div>
+                                        <div class="text-emerald-300">User::User(<span class="text-cyan-300">const User&</span> orig)</div>
+                                        <div class="text-white ml-4">: Person(orig),</div>
+                                        <div class="text-white ml-6">account(orig.account ? <span class="text-rose-400">new</span> BankAccount(*orig.account) : <span class="text-violet-400">nullptr</span>)</div>
+                                        <div class="text-emerald-300">{ }</div>
                                     </div>
                                 </div>
                                 <div class="code-block p-2 rounded text-xs font-mono click-reveal">
                                     <div class="hidden-content">
                                         <div class="text-slate-500">// 3. Destructor</div>
-                                        <div class="text-emerald-300">~User() {</div>
+                                        <div class="text-emerald-300">User::~User() {</div>
                                         <div class="text-white ml-4"><span class="text-rose-400">delete</span> account;</div>
                                         <div class="text-emerald-300">}</div>
                                     </div>
@@ -988,6 +990,228 @@
                                 </div>
                             </div>
                             <div class="text-center text-xs text-emerald-400">Separate objects — safe!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stack vs Heap Visualization -->
+            <div class="glass-card rounded-2xl p-6 reveal">
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-cyan-500"></span>
+                    Stack vs Heap Memory
+                </h3>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Memory Diagram -->
+                    <div class="relative">
+                        <div class="flex gap-6">
+                            <!-- STACK Column -->
+                            <div class="flex-1">
+                                <div class="text-center mb-3">
+                                    <span class="px-3 py-1 bg-blue-500/20 border border-blue-500/50 rounded text-blue-300 text-xs font-bold">STACK</span>
+                                    <div class="text-[10px] text-slate-500 mt-1">Automatic allocation</div>
+                                </div>
+                                <div id="stack-memory" class="space-y-2 border-2 border-blue-500/30 rounded-lg p-3 bg-slate-900/50 min-h-[280px]">
+                                    <!-- Stack frames will be animated here -->
+                                    <div class="stack-frame opacity-0 transition-all duration-500" data-frame="1">
+                                        <div class="text-[10px] text-blue-400 mb-1">main()</div>
+                                        <div class="bg-blue-900/30 border border-blue-500/40 rounded p-2">
+                                            <div class="flex items-center justify-between text-xs">
+                                                <span class="text-slate-300">BankSystem</span>
+                                                <span class="text-blue-400 font-mono">bank</span>
+                                            </div>
+                                            <div class="mt-1 pl-2 border-l border-slate-600 text-[10px] space-y-1">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-slate-400">users:</span>
+                                                    <span id="stack-users-ptr" class="text-amber-400 font-mono">User**</span>
+                                                    <span class="stack-arrow opacity-0 text-amber-400">→</span>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-slate-400">managers:</span>
+                                                    <span class="text-violet-400 font-mono">BankManager**</span>
+                                                    <span class="stack-arrow opacity-0 text-violet-400">→</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="stack-frame opacity-0 transition-all duration-500" data-frame="2">
+                                        <div class="text-[10px] text-blue-400 mb-1">addUser()</div>
+                                        <div class="bg-blue-900/30 border border-blue-500/40 rounded p-2">
+                                            <div class="flex items-center justify-between text-xs">
+                                                <span class="text-emerald-300">User*</span>
+                                                <span class="text-blue-400 font-mono">newUser</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="stack-frame opacity-0 transition-all duration-500" data-frame="3">
+                                        <div class="text-[10px] text-slate-500">↑ grows upward</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SVG Arrows Container -->
+                            <svg id="memory-arrows-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none" style="z-index: 10;">
+                                <defs>
+                                    <marker id="arrowhead-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                        <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
+                                    </marker>
+                                    <marker id="arrowhead-emerald" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                        <polygon points="0 0, 8 3, 0 6" fill="#10b981"/>
+                                    </marker>
+                                    <marker id="arrowhead-rose" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                        <polygon points="0 0, 8 3, 0 6" fill="#f43f5e"/>
+                                    </marker>
+                                </defs>
+                                <path id="arrow-users" class="opacity-0 transition-opacity duration-500" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arrowhead-amber)" d=""/>
+                                <path id="arrow-user-account" class="opacity-0 transition-opacity duration-500" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead-emerald)" d=""/>
+                                <path id="arrow-account-tx" class="opacity-0 transition-opacity duration-500" stroke="#f43f5e" stroke-width="2" fill="none" marker-end="url(#arrowhead-rose)" d=""/>
+                            </svg>
+
+                            <!-- HEAP Column -->
+                            <div class="flex-1">
+                                <div class="text-center mb-3">
+                                    <span class="px-3 py-1 bg-rose-500/20 border border-rose-500/50 rounded text-rose-300 text-xs font-bold">HEAP</span>
+                                    <div class="text-[10px] text-slate-500 mt-1">Dynamic allocation (new/delete)</div>
+                                </div>
+                                <div id="heap-memory" class="space-y-2 border-2 border-rose-500/30 rounded-lg p-3 bg-slate-900/50 min-h-[280px]">
+                                    <!-- Heap objects will be animated here -->
+                                    <div class="heap-block opacity-0 transition-all duration-500" data-block="1" id="heap-users-array">
+                                        <div class="bg-amber-900/30 border border-amber-500/40 rounded p-2">
+                                            <div class="text-[10px] text-amber-400 mb-1">User** (array of pointers)</div>
+                                            <div class="flex gap-1">
+                                                <div id="heap-user-ptr-0" class="w-12 h-6 bg-amber-500/30 rounded flex items-center justify-center text-[10px] text-amber-300">ptr→</div>
+                                                <div class="w-12 h-6 bg-amber-500/30 rounded flex items-center justify-center text-[10px] text-amber-300">ptr→</div>
+                                                <div class="w-12 h-6 bg-slate-700/50 rounded"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="heap-block opacity-0 transition-all duration-500" data-block="2" id="heap-user-obj">
+                                        <div class="bg-emerald-900/30 border border-emerald-500/40 rounded p-2">
+                                            <div class="text-[10px] text-emerald-400 mb-1">User object</div>
+                                            <div class="text-[10px] text-slate-300 space-y-0.5">
+                                                <div>name: "Alice"</div>
+                                                <div class="flex items-center gap-1">
+                                                    <span>account:</span>
+                                                    <span id="heap-account-ptr" class="text-emerald-400">BankAccount*</span>
+                                                    <span class="heap-arrow opacity-0 text-emerald-400">→</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="heap-block opacity-0 transition-all duration-500" data-block="3" id="heap-account-obj">
+                                        <div class="bg-cyan-900/30 border border-cyan-500/40 rounded p-2">
+                                            <div class="text-[10px] text-cyan-400 mb-1">BankAccount object</div>
+                                            <div class="text-[10px] text-slate-300 space-y-0.5">
+                                                <div>balance: 500.00</div>
+                                                <div class="flex items-center gap-1">
+                                                    <span>transactions:</span>
+                                                    <span class="text-rose-400">Transaction*</span>
+                                                    <span class="heap-arrow opacity-0 text-rose-400">→</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="heap-block opacity-0 transition-all duration-500" data-block="4" id="heap-tx-array">
+                                        <div class="bg-rose-900/30 border border-rose-500/40 rounded p-2">
+                                            <div class="text-[10px] text-rose-400 mb-1">Transaction[] (dynamic array)</div>
+                                            <div class="flex gap-1 flex-wrap">
+                                                <div class="w-8 h-5 bg-rose-500/30 rounded flex items-center justify-center text-[8px] text-rose-300">Tx1</div>
+                                                <div class="w-8 h-5 bg-rose-500/30 rounded flex items-center justify-center text-[8px] text-rose-300">Tx2</div>
+                                                <div class="w-8 h-5 bg-slate-700/50 rounded"></div>
+                                                <div class="w-8 h-5 bg-slate-700/50 rounded"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="heap-block opacity-0 text-[10px] text-slate-500 mt-2" data-block="5">
+                                        ↓ grows downward (fragmented)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Legend -->
+                        <div class="flex justify-center gap-6 mt-4 text-[10px]">
+                            <div class="flex items-center gap-1">
+                                <div class="w-3 h-3 bg-blue-500/50 rounded"></div>
+                                <span class="text-slate-400">Automatic (stack)</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <div class="w-3 h-3 bg-rose-500/50 rounded"></div>
+                                <span class="text-slate-400">Dynamic (heap)</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-amber-400">→</span>
+                                <span class="text-slate-400">Pointer</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Allocation Code & Controls -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-bold text-white">Allocation Sequence</h4>
+                        <div class="bg-slate-900 rounded-xl p-4 border border-slate-700 overflow-x-auto">
+                            <div id="heap-alloc-code" class="code-block font-mono text-[11px] space-y-1">
+                                <div class="alloc-line opacity-30 transition-opacity" data-step="1">
+                                    <span class="text-slate-500">// 1. Stack: BankSystem in main()</span>
+                                </div>
+                                <div class="alloc-line opacity-30 transition-opacity" data-step="1">
+                                    BankSystem bank; <span class="text-slate-500">// bank.run()</span>
+                                </div>
+                                <div class="alloc-line opacity-30 transition-opacity" data-step="2">
+                                    <span class="text-slate-500">// 2. BankSystem constructor → Heap</span>
+                                </div>
+                                <div class="alloc-line opacity-30 transition-opacity" data-step="2">
+                                    users = <span class="text-rose-400">new</span> User*[userCapacity];
+                                </div>
+                                <div class="alloc-line opacity-30 transition-opacity" data-step="3">
+                                    <span class="text-slate-500">// 3. createAccount() → Heap</span>
+                                </div>
+                                <div class="alloc-line opacity-30 transition-opacity" data-step="3">
+                                    User* newUser = <span class="text-rose-400">new</span> User(name, password, 0.00);
+                                </div>
+                                <div class="alloc-line opacity-30 transition-opacity" data-step="4">
+                                    <span class="text-slate-500">// 4. User constructor → Heap</span>
+                                </div>
+                                <div class="alloc-line opacity-30 transition-opacity" data-step="4">
+                                    account(<span class="text-rose-400">new</span> BankAccount(initialBalance))
+                                </div>
+                                <div class="alloc-line opacity-30 transition-opacity" data-step="5">
+                                    <span class="text-slate-500">// 5. addTransaction() → Heap</span>
+                                </div>
+                                <div class="alloc-line opacity-30 transition-opacity" data-step="5">
+                                    transactionHistory = <span class="text-rose-400">new</span> Transaction[transactionCapacity];
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="animate-heap-alloc" class="w-full py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded text-cyan-300 text-xs transition-colors">
+                            ▶ Animate Allocation
+                        </button>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="p-3 bg-blue-900/20 rounded border border-blue-500/30 text-xs">
+                                <div class="text-blue-400 font-bold mb-1">Stack</div>
+                                <ul class="text-slate-400 space-y-0.5 text-[10px]">
+                                    <li>• Fast allocation</li>
+                                    <li>• Auto cleanup (LIFO)</li>
+                                    <li>• Fixed size at compile</li>
+                                    <li>• Local scope only</li>
+                                </ul>
+                            </div>
+                            <div class="p-3 bg-rose-900/20 rounded border border-rose-500/30 text-xs">
+                                <div class="text-rose-400 font-bold mb-1">Heap</div>
+                                <ul class="text-slate-400 space-y-0.5 text-[10px]">
+                                    <li>• Manual new/delete</li>
+                                    <li>• Survives scope</li>
+                                    <li>• Runtime size</li>
+                                    <li>• Risk: memory leaks</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-amber-900/20 rounded border border-amber-500/30 text-xs text-amber-300">
+                            <span class="font-bold">Key Insight:</span> Pointers live on stack, pointed-to data lives on heap. <code class="bg-slate-800 px-1 rounded">delete</code> required to prevent leaks!
                         </div>
                     </div>
                 </div>
@@ -1302,6 +1526,67 @@
 
                     currentLine++;
                     setTimeout(animate, 400);
+                }
+            };
+            animate();
+        });
+
+        // ============================================
+        // STACK VS HEAP ALLOCATION ANIMATION
+        // ============================================
+        document.getElementById('animate-heap-alloc')?.addEventListener('click', () => {
+            const stackFrames = document.querySelectorAll('.stack-frame');
+            const heapBlocks = document.querySelectorAll('.heap-block');
+            const allocLines = document.querySelectorAll('.alloc-line');
+            const stackArrows = document.querySelectorAll('.stack-arrow');
+            const heapArrows = document.querySelectorAll('.heap-arrow');
+
+            // Reset all
+            stackFrames.forEach(f => f.classList.add('opacity-0'));
+            heapBlocks.forEach(b => b.classList.add('opacity-0'));
+            allocLines.forEach(l => { l.classList.remove('opacity-100'); l.classList.add('opacity-30'); });
+            stackArrows.forEach(a => a.classList.add('opacity-0'));
+            heapArrows.forEach(a => a.classList.add('opacity-0'));
+
+            let currentStep = 1;
+            const totalSteps = 5;
+
+            const animate = () => {
+                if (currentStep <= totalSteps) {
+                    // Highlight code lines for current step
+                    allocLines.forEach(line => {
+                        if (parseInt(line.dataset.step) === currentStep) {
+                            line.classList.remove('opacity-30');
+                            line.classList.add('opacity-100');
+                        }
+                    });
+
+                    // Show corresponding visual elements
+                    if (currentStep === 1) {
+                        // Stack: BankSystem created
+                        stackFrames[0]?.classList.remove('opacity-0');
+                    } else if (currentStep === 2) {
+                        // Heap: User** array
+                        heapBlocks[0]?.classList.remove('opacity-0');
+                        stackArrows[0]?.classList.remove('opacity-0');
+                    } else if (currentStep === 3) {
+                        // Heap: User object
+                        stackFrames[1]?.classList.remove('opacity-0');
+                        heapBlocks[1]?.classList.remove('opacity-0');
+                    } else if (currentStep === 4) {
+                        // Heap: BankAccount
+                        heapBlocks[2]?.classList.remove('opacity-0');
+                        heapArrows[0]?.classList.remove('opacity-0');
+                    } else if (currentStep === 5) {
+                        // Heap: Transaction array
+                        heapBlocks[3]?.classList.remove('opacity-0');
+                        heapBlocks[4]?.classList.remove('opacity-0');
+                        heapArrows[1]?.classList.remove('opacity-0');
+                        stackFrames[2]?.classList.remove('opacity-0');
+                    }
+
+                    currentStep++;
+                    setTimeout(animate, 800);
                 }
             };
             animate();
