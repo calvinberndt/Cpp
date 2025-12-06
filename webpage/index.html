@@ -1,13 +1,11 @@
-<!-- Bank Management System Technical Report - Based on Actual Codebase Analysis -->
-<!-- Chosen Palette: Brilliant Blues & Neon Tech (Slate-900 Background, Cyan/Emerald/Violet/Rose Accents) -->
-<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-
+<!-- Bank Management System - Interactive Presentation -->
+<!-- Dynamic scroll animations, click interactions, keyboard navigation -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bank Management System - Technical Architecture Report</title>
+    <title>Bank Management System - Interactive Presentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -19,32 +17,20 @@
             color: #f8fafc;
         }
 
-        h1, h2, h3, h4 {
-            font-family: 'Inter', sans-serif;
-            letter-spacing: -0.025em;
-        }
-
-        .font-mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
+        h1, h2, h3, h4 { font-family: 'Inter', sans-serif; letter-spacing: -0.025em; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
 
         .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
-            max-height: 400px;
+            position: relative; width: 100%; max-width: 600px;
+            margin-left: auto; margin-right: auto; height: 350px; max-height: 400px;
         }
 
         .glass-card {
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            transition: transform 0.3s ease, border-color 0.3s ease, opacity 0.3s ease;
         }
-
         .glass-card:hover {
             border-color: rgba(56, 189, 248, 0.5);
             transform: translateY(-2px);
@@ -53,81 +39,346 @@
         .gradient-text {
             background: linear-gradient(to right, #38bdf8, #818cf8);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .gradient-text-emerald {
-            background: linear-gradient(to right, #10b981, #38bdf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .gradient-text-rose {
-            background: linear-gradient(to right, #f43f5e, #a855f7);
-            -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
-        .class-card {
-            transition: all 0.3s ease;
-        }
-        .class-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.2);
-        }
+        /* ============================================
+           ANIMATION CLASSES
+           ============================================ */
 
-        .inheritance-line {
-            background: linear-gradient(to bottom, #38bdf8, transparent);
+        /* Initial hidden state for scroll animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
-
-        .composition-line {
-            background: linear-gradient(to right, #10b981, transparent);
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Staggered children animations */
+        .stagger-children > * {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .stagger-children.active > *:nth-child(1) { transition-delay: 0.1s; }
+        .stagger-children.active > *:nth-child(2) { transition-delay: 0.2s; }
+        .stagger-children.active > *:nth-child(3) { transition-delay: 0.3s; }
+        .stagger-children.active > *:nth-child(4) { transition-delay: 0.4s; }
+        .stagger-children.active > *:nth-child(5) { transition-delay: 0.5s; }
+        .stagger-children.active > *:nth-child(6) { transition-delay: 0.6s; }
+        .stagger-children.active > * {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Click to reveal */
+        .click-reveal {
+            cursor: pointer;
+            position: relative;
+        }
+        .click-reveal::after {
+            content: 'Click to reveal';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(56, 189, 248, 0.9);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+        .click-reveal.revealed::after {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .click-reveal > .hidden-content {
+            opacity: 0;
+            filter: blur(8px);
+            transition: opacity 0.5s ease, filter 0.5s ease;
+        }
+        .click-reveal.revealed > .hidden-content {
+            opacity: 1;
+            filter: blur(0);
+        }
+
+        /* Step-by-step reveal */
+        .step-item {
+            opacity: 0.3;
+            transform: scale(0.95);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .step-item.active {
+            opacity: 1;
+            transform: scale(1);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+        }
+        .step-item:hover {
+            opacity: 0.8;
+        }
+
+        /* Pulse animation */
         .pulse-glow {
             animation: pulse-glow 2s ease-in-out infinite;
         }
-
         @keyframes pulse-glow {
             0%, 100% { box-shadow: 0 0 5px rgba(56, 189, 248, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.6); }
+            50% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); }
         }
 
+        /* Typing animation */
+        .typing-effect {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #38bdf8;
+            animation: typing 2s steps(40) forwards, blink 0.8s infinite;
+            width: 0;
+        }
+        .typing-effect.active {
+            width: 100%;
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        /* Progress bar */
+        #progress-bar {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            z-index: 100;
+            transition: width 0.3s ease;
+        }
+
+        /* Presentation mode */
+        .presentation-mode {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        /* Section indicator */
+        #section-nav {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .section-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(148, 163, 184, 0.3);
+            border: 2px solid rgba(148, 163, 184, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .section-dot:hover {
+            background: rgba(56, 189, 248, 0.5);
+            border-color: #38bdf8;
+        }
+        .section-dot.active {
+            background: #38bdf8;
+            border-color: #38bdf8;
+            transform: scale(1.3);
+        }
+
+        /* Code block */
         .code-block {
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
             border: 1px solid rgba(71, 85, 105, 0.5);
         }
 
+        /* Memory block hover */
         .memory-block {
             transition: all 0.3s ease;
         }
         .memory-block:hover {
-            transform: translateX(5px);
+            transform: translateX(8px);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        /* Class card */
+        .class-card {
+            transition: all 0.4s ease;
+        }
+        .class-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.25);
+        }
+
+        /* Expandable section */
+        .expandable-header {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .expandable-header:hover {
+            background: rgba(56, 189, 248, 0.1);
+        }
+        .expandable-header::after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s ease;
+        }
+        .expandable-header.collapsed::after {
+            transform: rotate(-90deg);
+        }
+        .expandable-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+        }
+        .expandable-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+        .tooltip::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-5px);
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 100;
+        }
+        .tooltip:hover::before {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Keyboard hint */
+        .kbd {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Animation for numbers counting up */
+        .count-up {
+            transition: all 0.5s ease;
         }
     </style>
 </head>
 <body class="antialiased selection:bg-cyan-500 selection:text-white">
 
+    <!-- Progress Bar -->
+    <div id="progress-bar" style="width: 0%;"></div>
+
+    <!-- Section Navigation Dots -->
+    <div id="section-nav" class="hidden md:flex">
+        <div class="section-dot tooltip" data-section="overview" data-tooltip="Overview"></div>
+        <div class="section-dot tooltip" data-section="architecture" data-tooltip="Architecture"></div>
+        <div class="section-dot tooltip" data-section="inheritance" data-tooltip="Inheritance"></div>
+        <div class="section-dot tooltip" data-section="composition" data-tooltip="Composition"></div>
+        <div class="section-dot tooltip" data-section="memory" data-tooltip="Memory"></div>
+        <div class="section-dot tooltip" data-section="polymorphism" data-tooltip="Polymorphism"></div>
+        <div class="section-dot tooltip" data-section="data" data-tooltip="Analytics"></div>
+    </div>
+
+    <!-- Presentation Controls -->
+    <div class="presentation-mode">
+        <div class="glass-card rounded-lg p-3 flex items-center gap-3">
+            <button id="prev-section" class="text-slate-400 hover:text-white transition-colors p-2" title="Previous (←)">
+                <span class="text-lg">←</span>
+            </button>
+            <span class="text-xs text-slate-400"><span class="kbd">←</span> <span class="kbd">→</span></span>
+            <button id="next-section" class="text-slate-400 hover:text-white transition-colors p-2" title="Next (→)">
+                <span class="text-lg">→</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
     <nav class="sticky top-0 z-50 glass-card border-b border-slate-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
                     <span class="text-2xl font-bold tracking-tight text-white">Bank<span class="text-cyan-400">Sys</span>++</span>
+                    <span class="ml-4 text-xs text-slate-500 hidden sm:inline">Interactive Presentation</span>
                 </div>
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#overview" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Overview</a>
-                        <a href="#architecture" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Architecture</a>
-                        <a href="#inheritance" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Inheritance</a>
-                        <a href="#composition" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Composition</a>
-                        <a href="#memory" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Memory</a>
-                        <a href="#polymorphism" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Polymorphism</a>
-                        <a href="#data" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Analytics</a>
+                        <a href="#overview" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Overview</a>
+                        <a href="#architecture" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Architecture</a>
+                        <a href="#inheritance" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Inheritance</a>
+                        <a href="#composition" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Composition</a>
+                        <a href="#memory" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Memory</a>
+                        <a href="#polymorphism" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Polymorphism</a>
+                        <a href="#data" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Analytics</a>
                     </div>
                 </div>
             </div>
@@ -137,297 +388,280 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
 
         <!-- HEADER SECTION -->
-        <header class="text-center space-y-6">
-            <div class="inline-block px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-sm font-semibold mb-4">
+        <header class="text-center space-y-6 reveal" data-section="header">
+            <div class="inline-block px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-sm font-semibold mb-4 reveal-scale">
                 Comp Sci 371: Advanced Object-Oriented Design
             </div>
             <h1 class="text-5xl md:text-7xl font-bold text-white tracking-tight">
                 Bank Management <br>
                 <span class="gradient-text">System Architecture</span>
             </h1>
-            <p class="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+            <p class="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed reveal">
                 A robust C++ financial infrastructure leveraging <span class="text-cyan-400">inheritance</span>,
                 <span class="text-emerald-400">composition</span>, and <span class="text-violet-400">polymorphism</span>
-                with manual memory management. No STL containers — pure dynamic arrays with Rule of Three implementation.
+                with manual memory management.
             </p>
+            <div class="flex justify-center gap-4 mt-8 reveal">
+                <span class="text-xs text-slate-500">Use <span class="kbd">←</span> <span class="kbd">→</span> to navigate • Click elements to reveal details</span>
+            </div>
         </header>
 
         <!-- KPI SECTION -->
-        <section id="overview" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div class="glass-card rounded-xl p-4 text-center">
-                <div class="text-3xl font-bold text-cyan-400">6</div>
-                <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Classes</div>
-            </div>
-            <div class="glass-card rounded-xl p-4 text-center">
-                <div class="text-3xl font-bold text-emerald-400">1</div>
-                <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Abstract Base</div>
-            </div>
-            <div class="glass-card rounded-xl p-4 text-center">
-                <div class="text-3xl font-bold text-violet-400">5</div>
-                <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Pure Virtual</div>
-            </div>
-            <div class="glass-card rounded-xl p-4 text-center">
-                <div class="text-3xl font-bold text-rose-400">3</div>
-                <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Dynamic Arrays</div>
-            </div>
-            <div class="glass-card rounded-xl p-4 text-center">
-                <div class="text-3xl font-bold text-amber-400">2</div>
-                <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Compositions</div>
-            </div>
-            <div class="glass-card rounded-xl p-4 text-center">
-                <div class="text-3xl font-bold text-pink-400">2</div>
-                <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Static Members</div>
+        <section id="overview" class="scroll-section" data-section="overview">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 stagger-children">
+                <div class="glass-card rounded-xl p-4 text-center tooltip" data-tooltip="Person, User, BankManager, BankAccount, Transaction, BankSystem">
+                    <div class="text-3xl font-bold text-cyan-400 count-up" data-count="6">0</div>
+                    <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Classes</div>
+                </div>
+                <div class="glass-card rounded-xl p-4 text-center tooltip" data-tooltip="Person is abstract">
+                    <div class="text-3xl font-bold text-emerald-400 count-up" data-count="1">0</div>
+                    <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Abstract Base</div>
+                </div>
+                <div class="glass-card rounded-xl p-4 text-center tooltip" data-tooltip="~Person, displayDetails, authenticate, getName, getPassword">
+                    <div class="text-3xl font-bold text-violet-400 count-up" data-count="5">0</div>
+                    <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Pure Virtual</div>
+                </div>
+                <div class="glass-card rounded-xl p-4 text-center tooltip" data-tooltip="User**, BankManager**, Transaction*">
+                    <div class="text-3xl font-bold text-rose-400 count-up" data-count="3">0</div>
+                    <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Dynamic Arrays</div>
+                </div>
+                <div class="glass-card rounded-xl p-4 text-center tooltip" data-tooltip="User→BankAccount, BankAccount→Transaction[]">
+                    <div class="text-3xl font-bold text-amber-400 count-up" data-count="2">0</div>
+                    <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Compositions</div>
+                </div>
+                <div class="glass-card rounded-xl p-4 text-center tooltip" data-tooltip="activeAccountCount, nextAccountNumber">
+                    <div class="text-3xl font-bold text-pink-400 count-up" data-count="2">0</div>
+                    <div class="text-xs text-slate-400 uppercase tracking-wider mt-1">Static Members</div>
+                </div>
             </div>
         </section>
 
-        <!-- COMPLETE ARCHITECTURE DIAGRAM -->
-        <section id="architecture" class="space-y-8">
-            <div class="border-l-4 border-cyan-500 pl-6">
-                <h2 class="text-3xl font-bold text-white">Complete System Architecture</h2>
+        <!-- ARCHITECTURE SECTION -->
+        <section id="architecture" class="space-y-8 scroll-section" data-section="architecture">
+            <div class="border-l-4 border-cyan-500 pl-6 reveal-left">
+                <h2 class="text-3xl font-bold text-white expandable-header" data-target="arch-content">Complete System Architecture</h2>
                 <p class="text-slate-400 mt-2 text-lg">
-                    Full class diagram showing inheritance hierarchy, composition relationships, and ownership chains.
+                    Click on each class to see details. The diagram shows inheritance, composition, and ownership chains.
                 </p>
             </div>
 
-            <div class="glass-card rounded-2xl p-8 overflow-x-auto">
-                <div class="min-w-[1000px] relative">
+            <div id="arch-content" class="expandable-content">
+                <div class="glass-card rounded-2xl p-8 overflow-x-auto reveal">
+                    <div class="min-w-[1000px] relative">
 
-                    <!-- LEGEND -->
-                    <div class="absolute top-0 right-0 bg-slate-800/80 p-3 rounded-lg text-xs space-y-2 z-20">
-                        <div class="font-bold text-white mb-2">Legend</div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-0.5 bg-cyan-500"></div>
-                            <span class="text-slate-300">Inheritance (is-a)</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-emerald-500 rotate-45"></div>
-                            <span class="text-slate-300">Composition (owns)</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-0.5 bg-violet-500 border-dashed border-t-2 border-violet-500 bg-transparent"></div>
-                            <span class="text-slate-300">Aggregation (uses)</span>
-                        </div>
-                    </div>
-
-                    <!-- ROW 1: BankSystem (Facade) -->
-                    <div class="flex justify-center mb-8">
-                        <div class="class-card w-80 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-amber-500/50 rounded-xl p-5 shadow-lg shadow-amber-900/20">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-xs text-amber-400 font-mono">«Facade»</div>
-                                <div class="px-2 py-0.5 bg-amber-500/20 rounded text-[10px] text-amber-300">Container</div>
+                        <!-- LEGEND -->
+                        <div class="absolute top-0 right-0 bg-slate-800/80 p-3 rounded-lg text-xs space-y-2 z-20 reveal-right">
+                            <div class="font-bold text-white mb-2">Legend</div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-0.5 bg-cyan-500"></div>
+                                <span class="text-slate-300">Inheritance (is-a)</span>
                             </div>
-                            <div class="font-bold text-xl text-white">BankSystem</div>
-                            <div class="my-3 border-t border-amber-500/30"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1">
-                                <div class="text-amber-300">- users: User**</div>
-                                <div class="text-amber-300">- managers: BankManager**</div>
-                                <div>- userCount: unsigned int</div>
-                                <div>- userCapacity: unsigned int</div>
-                                <div>- managerCount: unsigned int</div>
-                                <div>- managerCapacity: unsigned int</div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-emerald-500 rotate-45"></div>
+                                <span class="text-slate-300">Composition (owns)</span>
                             </div>
-                            <div class="my-3 border-t border-amber-500/30"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1">
-                                <div>+ run()</div>
-                                <div>+ addUser(User*)</div>
-                                <div>+ addManager(BankManager*)</div>
-                                <div class="text-rose-300">+ growUserArray()</div>
-                                <div class="text-rose-300">+ growManagerArray()</div>
-                                <div>+ loadUsersFromFile()</div>
-                                <div>+ saveUsersToFile()</div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-0.5 border-t-2 border-dashed border-violet-500"></div>
+                                <span class="text-slate-300">Aggregation (uses)</span>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Aggregation lines from BankSystem -->
-                    <div class="flex justify-center mb-4">
-                        <div class="flex items-center gap-32">
-                            <div class="flex flex-col items-center">
-                                <div class="w-px h-8 bg-violet-500 border-l-2 border-dashed border-violet-500"></div>
-                                <div class="text-[10px] text-violet-400">User**</div>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <div class="w-px h-8 bg-violet-500 border-l-2 border-dashed border-violet-500"></div>
-                                <div class="text-[10px] text-violet-400">BankManager**</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ROW 2: Person (Abstract Base) -->
-                    <div class="flex justify-center mb-4">
-                        <div class="class-card w-72 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-cyan-500/70 rounded-xl p-5 shadow-lg shadow-cyan-900/30 pulse-glow">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-xs text-cyan-400 font-mono">«Abstract»</div>
-                                <div class="px-2 py-0.5 bg-cyan-500/20 rounded text-[10px] text-cyan-300">Base Class</div>
-                            </div>
-                            <div class="font-bold text-xl text-white">Person</div>
-                            <div class="my-3 border-t border-cyan-500/30"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1">
-                                <div class="text-cyan-300"># name: string</div>
-                                <div class="text-cyan-300"># password: string</div>
-                            </div>
-                            <div class="my-3 border-t border-cyan-500/30"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1 italic">
-                                <div class="text-violet-300">+ virtual ~Person()</div>
-                                <div class="text-violet-300">+ displayDetails() = 0</div>
-                                <div class="text-violet-300">+ authenticate() = 0</div>
-                                <div class="text-violet-300">+ getName() = 0</div>
-                                <div class="text-violet-300">+ getPassword() = 0</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Inheritance connectors -->
-                    <div class="flex justify-center mb-4">
-                        <div class="relative w-96 h-12">
-                            <div class="absolute top-0 left-1/2 w-px h-4 bg-cyan-500 -translate-x-1/2"></div>
-                            <div class="absolute top-4 left-12 right-12 h-px bg-cyan-500"></div>
-                            <div class="absolute top-4 left-12 w-px h-8 bg-cyan-500"></div>
-                            <div class="absolute top-4 right-12 w-px h-8 bg-cyan-500"></div>
-                            <!-- Inheritance arrows (triangles) -->
-                            <div class="absolute top-[10px] left-12 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-b-[8px] border-l-transparent border-r-transparent border-b-cyan-500"></div>
-                            <div class="absolute top-[10px] right-12 translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-b-[8px] border-l-transparent border-r-transparent border-b-cyan-500"></div>
-                        </div>
-                    </div>
-
-                    <!-- ROW 3: Derived Classes -->
-                    <div class="flex justify-center gap-16 mb-12 relative">
-                        <!-- User Class -->
-                        <div id="user-class" class="class-card w-72 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-emerald-500/50 rounded-xl p-5 shadow-lg shadow-emerald-900/20 relative">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-xs text-emerald-400 font-mono">«Concrete»</div>
-                                <div class="px-2 py-0.5 bg-emerald-500/20 rounded text-[10px] text-emerald-300">Derived</div>
-                            </div>
-                            <div class="font-bold text-xl text-white">User</div>
-                            <div class="my-3 border-t border-emerald-500/30"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1">
-                                <div class="text-emerald-300">- account: BankAccount*</div>
-                            </div>
-                            <div class="my-3 border-t border-emerald-500/30"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1">
-                                <div>+ User(name, password, balance)</div>
-                                <div class="text-rose-300">+ User(const User&) // Deep Copy</div>
-                                <div class="text-rose-300">+ ~User() // delete account</div>
-                                <div class="text-violet-300">+ displayDetails() override</div>
-                                <div class="text-violet-300">+ authenticate() override</div>
-                                <div>+ getAccount(): BankAccount*</div>
-                            </div>
-                            <!-- Composition diamond at User (owner) end - positioned at right edge -->
-                            <div class="absolute right-0 top-1/2 w-5 h-5 bg-emerald-500 rotate-45 z-20" style="transform: translate(50%, -50%) rotate(45deg); box-shadow: 0 0 4px rgba(16, 185, 129, 0.5);"></div>
                         </div>
 
-                        <!-- BankManager Class -->
-                        <div class="class-card w-72 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-violet-500/50 rounded-xl p-5 shadow-lg shadow-violet-900/20">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-xs text-violet-400 font-mono">«Concrete»</div>
-                                <div class="px-2 py-0.5 bg-violet-500/20 rounded text-[10px] text-violet-300">Derived</div>
+                        <!-- ROW 1: BankSystem (Facade) - Click to reveal -->
+                        <div class="flex justify-center mb-8">
+                            <div class="step-item class-card w-80 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-amber-500/50 rounded-xl p-5 shadow-lg shadow-amber-900/20" data-step="1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-xs text-amber-400 font-mono">«Facade»</div>
+                                    <div class="px-2 py-0.5 bg-amber-500/20 rounded text-[10px] text-amber-300">Container</div>
+                                </div>
+                                <div class="font-bold text-xl text-white">BankSystem</div>
+                                <div class="step-details hidden mt-3">
+                                    <div class="border-t border-amber-500/30 pt-3"></div>
+                                    <div class="text-left text-xs text-slate-300 font-mono space-y-1">
+                                        <div class="text-amber-300">- users: User**</div>
+                                        <div class="text-amber-300">- managers: BankManager**</div>
+                                        <div>- userCount, userCapacity</div>
+                                        <div>- managerCount, managerCapacity</div>
+                                    </div>
+                                    <div class="border-t border-amber-500/30 mt-3 pt-3"></div>
+                                    <div class="text-left text-xs text-slate-300 font-mono space-y-1">
+                                        <div>+ run()</div>
+                                        <div class="text-rose-300">+ growUserArray()</div>
+                                        <div>+ loadUsersFromFile()</div>
+                                    </div>
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
                             </div>
-                            <div class="font-bold text-xl text-white">BankManager</div>
-                            <div class="my-3 border-t border-violet-500/30"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1">
-                                <div class="text-slate-500 italic">// inherits name, password</div>
-                            </div>
-                            <div class="my-3 border-t border-violet-500/30"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1">
-                                <div>+ BankManager(name, password)</div>
-                                <div>+ BankManager(const BankManager&)</div>
-                                <div>+ ~BankManager()</div>
-                                <div class="text-violet-300">+ displayDetails() override</div>
-                                <div class="text-violet-300">+ authenticate() override</div>
-                                <div>+ viewUserAccount(BankSystem&)</div>
-                                <div>+ accessAllUserData(BankSystem&)</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Spacer for composition line -->
-                    <div style="height: 80px;"></div>
-
-                    <!-- Composition connector line from User to BankAccount - SVG overlay -->
-                    <svg id="composition-line-svg" class="absolute" style="top: 0; left: 0; width: 100%; height: 800px; pointer-events: none; z-index: 5; overflow: visible;">
-                        <path id="composition-path" stroke="#10b981" stroke-width="3" fill="none" stroke-linecap="round" d=""/>
-                    </svg>
-
-                    <!-- ROW 4: BankAccount (Composition target) -->
-                    <div id="bankaccount-row" class="flex justify-start ml-32 gap-8 mb-8 mt-4">
-                        <div class="class-card w-80 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-emerald-500/50 rounded-xl p-5 shadow-lg shadow-emerald-900/20 relative">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-xs text-emerald-400 font-mono">«Value Type»</div>
-                                <div class="px-2 py-0.5 bg-emerald-500/20 rounded text-[10px] text-emerald-300">Owned by User</div>
-                            </div>
-                            <div class="font-bold text-xl text-white">BankAccount</div>
-                            <div class="my-3 border-t border-emerald-500/30"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1">
-                                <div>- balance: double</div>
-                                <div>- accountNumber: unsigned int</div>
-                                <div class="text-rose-300">- transactionHistory: Transaction*</div>
-                                <div>- transactionCount: unsigned int</div>
-                                <div>- transactionCapacity: unsigned int</div>
-                                <div class="text-pink-300 mt-2">static activeAccountCount: uint</div>
-                                <div class="text-pink-300">static nextAccountNumber: uint = 1000</div>
-                            </div>
-                            <div class="my-3 border-t border-emerald-500/30"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1">
-                                <div>+ BankAccount(initialBalance)</div>
-                                <div class="text-rose-300">+ BankAccount(const BankAccount&)</div>
-                                <div class="text-rose-300">+ ~BankAccount() // delete[] history</div>
-                                <div>+ deposit(amount)</div>
-                                <div>+ withdraw(amount)</div>
-                                <div class="text-rose-300">+ growTransactionArray()</div>
-                            </div>
-                            <!-- Composition connector to Transaction -->
-                            <div class="absolute -right-8 top-2/3 w-8 h-px bg-emerald-500"></div>
-                            <div class="absolute -right-2 top-2/3 w-3 h-3 bg-emerald-500 rotate-45 -translate-y-1/2"></div>
                         </div>
 
-                        <!-- Transaction Class -->
-                        <div class="class-card w-64 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-600 rounded-xl p-5 shadow-lg mt-16">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-xs text-slate-400 font-mono">«Value Type»</div>
-                            </div>
-                            <div class="font-bold text-lg text-white">Transaction</div>
-                            <div class="my-3 border-t border-slate-600"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1">
-                                <div>- type: TransactionType</div>
-                                <div>- amount: double</div>
-                                <div>- date: string</div>
-                            </div>
-                            <div class="my-3 border-t border-slate-600"></div>
-                            <div class="text-left text-xs text-slate-300 font-mono space-y-1">
-                                <div>+ Transaction(type, amount)</div>
-                                <div>+ displayTransaction()</div>
-                                <div class="text-pink-300">+ static getCurrentDate()</div>
-                            </div>
-                            <!-- Enum -->
-                            <div class="mt-4 p-2 bg-slate-900 rounded border border-slate-700">
-                                <div class="text-[10px] text-slate-500 mb-1">«enum class»</div>
-                                <div class="text-xs font-mono text-slate-300">TransactionType</div>
-                                <div class="text-[10px] text-slate-400 mt-1">DEPOSIT | WITHDRAWAL</div>
+                        <!-- Aggregation lines -->
+                        <div class="flex justify-center mb-4 reveal">
+                            <div class="flex items-center gap-32">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-px h-8 border-l-2 border-dashed border-violet-500"></div>
+                                    <div class="text-[10px] text-violet-400">User**</div>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="w-px h-8 border-l-2 border-dashed border-violet-500"></div>
+                                    <div class="text-[10px] text-violet-400">BankManager**</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Relationship Summary -->
-                    <div class="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
-                        <div class="bg-slate-800/50 p-4 rounded-lg border border-cyan-500/30">
-                            <h4 class="text-cyan-400 font-bold text-sm">Inheritance</h4>
-                            <p class="text-xs text-slate-400 mt-1">Person → User</p>
-                            <p class="text-xs text-slate-400">Person → BankManager</p>
+                        <!-- ROW 2: Person (Abstract Base) -->
+                        <div class="flex justify-center mb-4">
+                            <div class="step-item class-card w-72 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-cyan-500/70 rounded-xl p-5 shadow-lg shadow-cyan-900/30 pulse-glow" data-step="2">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-xs text-cyan-400 font-mono">«Abstract»</div>
+                                    <div class="px-2 py-0.5 bg-cyan-500/20 rounded text-[10px] text-cyan-300">Base Class</div>
+                                </div>
+                                <div class="font-bold text-xl text-white">Person</div>
+                                <div class="step-details hidden mt-3">
+                                    <div class="border-t border-cyan-500/30 pt-3"></div>
+                                    <div class="text-left text-xs text-slate-300 font-mono space-y-1">
+                                        <div class="text-cyan-300"># name: string</div>
+                                        <div class="text-cyan-300"># password: string</div>
+                                    </div>
+                                    <div class="border-t border-cyan-500/30 mt-3 pt-3"></div>
+                                    <div class="text-left text-xs text-slate-300 font-mono space-y-1 italic">
+                                        <div class="text-violet-300">+ virtual ~Person()</div>
+                                        <div class="text-violet-300">+ displayDetails() = 0</div>
+                                        <div class="text-violet-300">+ authenticate() = 0</div>
+                                    </div>
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
+                            </div>
                         </div>
-                        <div class="bg-slate-800/50 p-4 rounded-lg border border-emerald-500/30">
-                            <h4 class="text-emerald-400 font-bold text-sm">Composition</h4>
-                            <p class="text-xs text-slate-400 mt-1">User owns BankAccount</p>
-                            <p class="text-xs text-slate-400">BankAccount owns Transaction[]</p>
+
+                        <!-- Inheritance connectors -->
+                        <div class="flex justify-center mb-4 reveal">
+                            <div class="relative w-96 h-12">
+                                <div class="absolute top-0 left-1/2 w-px h-4 bg-cyan-500 -translate-x-1/2"></div>
+                                <div class="absolute top-4 left-12 right-12 h-px bg-cyan-500"></div>
+                                <div class="absolute top-4 left-12 w-px h-8 bg-cyan-500"></div>
+                                <div class="absolute top-4 right-12 w-px h-8 bg-cyan-500"></div>
+                                <div class="absolute top-[10px] left-12 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-b-[8px] border-l-transparent border-r-transparent border-b-cyan-500"></div>
+                                <div class="absolute top-[10px] right-12 translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-b-[8px] border-l-transparent border-r-transparent border-b-cyan-500"></div>
+                            </div>
                         </div>
-                        <div class="bg-slate-800/50 p-4 rounded-lg border border-violet-500/30">
-                            <h4 class="text-violet-400 font-bold text-sm">Aggregation</h4>
-                            <p class="text-xs text-slate-400 mt-1">BankSystem manages User**</p>
-                            <p class="text-xs text-slate-400">BankSystem manages BankManager**</p>
+
+                        <!-- ROW 3: Derived Classes -->
+                        <div class="flex justify-center gap-16 mb-12 relative">
+                            <!-- User Class -->
+                            <div id="user-class" class="step-item class-card w-72 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-emerald-500/50 rounded-xl p-5 shadow-lg shadow-emerald-900/20 relative" data-step="3">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-xs text-emerald-400 font-mono">«Concrete»</div>
+                                    <div class="px-2 py-0.5 bg-emerald-500/20 rounded text-[10px] text-emerald-300">Derived</div>
+                                </div>
+                                <div class="font-bold text-xl text-white">User</div>
+                                <div class="step-details hidden mt-3">
+                                    <div class="border-t border-emerald-500/30 pt-3"></div>
+                                    <div class="text-left text-xs text-slate-300 font-mono space-y-1">
+                                        <div class="text-emerald-300">- account: BankAccount*</div>
+                                    </div>
+                                    <div class="border-t border-emerald-500/30 mt-3 pt-3"></div>
+                                    <div class="text-left text-xs text-slate-300 font-mono space-y-1">
+                                        <div class="text-rose-300">+ User(const User&) // Deep Copy</div>
+                                        <div class="text-rose-300">+ ~User() // delete account</div>
+                                        <div class="text-violet-300">+ displayDetails() override</div>
+                                    </div>
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
+                                <div class="absolute right-0 top-1/2 w-5 h-5 bg-emerald-500 rotate-45 z-20" style="transform: translate(50%, -50%) rotate(45deg);"></div>
+                            </div>
+
+                            <!-- BankManager Class -->
+                            <div class="step-item class-card w-72 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-violet-500/50 rounded-xl p-5 shadow-lg shadow-violet-900/20" data-step="4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-xs text-violet-400 font-mono">«Concrete»</div>
+                                    <div class="px-2 py-0.5 bg-violet-500/20 rounded text-[10px] text-violet-300">Derived</div>
+                                </div>
+                                <div class="font-bold text-xl text-white">BankManager</div>
+                                <div class="step-details hidden mt-3">
+                                    <div class="border-t border-violet-500/30 pt-3"></div>
+                                    <div class="text-left text-xs text-slate-500 italic">// inherits name, password</div>
+                                    <div class="border-t border-violet-500/30 mt-3 pt-3"></div>
+                                    <div class="text-left text-xs text-slate-300 font-mono space-y-1">
+                                        <div class="text-violet-300">+ displayDetails() override</div>
+                                        <div>+ viewUserAccount(BankSystem&)</div>
+                                        <div>+ accessAllUserData()</div>
+                                    </div>
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
+                            </div>
                         </div>
-                        <div class="bg-slate-800/50 p-4 rounded-lg border border-amber-500/30">
-                            <h4 class="text-amber-400 font-bold text-sm">Facade Pattern</h4>
-                            <p class="text-xs text-slate-400 mt-1">BankSystem provides</p>
-                            <p class="text-xs text-slate-400">unified interface</p>
+
+                        <!-- Spacer for composition line -->
+                        <div style="height: 80px;"></div>
+
+                        <!-- SVG Composition Line -->
+                        <svg id="composition-line-svg" class="absolute" style="top: 0; left: 0; width: 100%; height: 800px; pointer-events: none; z-index: 5; overflow: visible;">
+                            <path id="composition-path" stroke="#10b981" stroke-width="3" fill="none" stroke-linecap="round" d=""/>
+                        </svg>
+
+                        <!-- ROW 4: BankAccount -->
+                        <div id="bankaccount-row" class="flex justify-start ml-32 gap-8 mb-8 mt-4">
+                            <div class="step-item class-card w-80 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-emerald-500/50 rounded-xl p-5 shadow-lg shadow-emerald-900/20 relative" data-step="5">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="text-xs text-emerald-400 font-mono">«Value Type»</div>
+                                    <div class="px-2 py-0.5 bg-emerald-500/20 rounded text-[10px] text-emerald-300">Owned by User</div>
+                                </div>
+                                <div class="font-bold text-xl text-white">BankAccount</div>
+                                <div class="step-details hidden mt-3">
+                                    <div class="border-t border-emerald-500/30 pt-3"></div>
+                                    <div class="text-left text-xs text-slate-300 font-mono space-y-1">
+                                        <div>- balance: double</div>
+                                        <div class="text-rose-300">- transactionHistory: Transaction*</div>
+                                        <div class="text-pink-300 mt-2">static nextAccountNumber = 1000</div>
+                                    </div>
+                                    <div class="border-t border-emerald-500/30 mt-3 pt-3"></div>
+                                    <div class="text-left text-xs text-slate-300 font-mono space-y-1">
+                                        <div class="text-rose-300">+ ~BankAccount() // delete[] history</div>
+                                        <div class="text-rose-300">+ growTransactionArray()</div>
+                                    </div>
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
+                                <div class="absolute -right-8 top-2/3 w-8 h-px bg-emerald-500"></div>
+                                <div class="absolute -right-2 top-2/3 w-3 h-3 bg-emerald-500 rotate-45 -translate-y-1/2"></div>
+                            </div>
+
+                            <!-- Transaction Class -->
+                            <div class="step-item class-card w-64 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-600 rounded-xl p-5 shadow-lg mt-16" data-step="6">
+                                <div class="text-xs text-slate-400 font-mono mb-2">«Value Type»</div>
+                                <div class="font-bold text-lg text-white">Transaction</div>
+                                <div class="step-details hidden mt-3">
+                                    <div class="border-t border-slate-600 pt-3"></div>
+                                    <div class="text-left text-xs text-slate-300 font-mono space-y-1">
+                                        <div>- type: TransactionType</div>
+                                        <div>- amount: double</div>
+                                        <div>- date: string</div>
+                                    </div>
+                                    <div class="mt-4 p-2 bg-slate-900 rounded border border-slate-700">
+                                        <div class="text-[10px] text-slate-500">«enum class»</div>
+                                        <div class="text-xs text-slate-300">DEPOSIT | WITHDRAWAL</div>
+                                    </div>
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
+                            </div>
+                        </div>
+
+                        <!-- Relationship Summary -->
+                        <div class="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4 text-center stagger-children">
+                            <div class="bg-slate-800/50 p-4 rounded-lg border border-cyan-500/30 hover:bg-cyan-500/10 transition-colors cursor-pointer">
+                                <h4 class="text-cyan-400 font-bold text-sm">Inheritance</h4>
+                                <p class="text-xs text-slate-400 mt-1">Person → User, BankManager</p>
+                            </div>
+                            <div class="bg-slate-800/50 p-4 rounded-lg border border-emerald-500/30 hover:bg-emerald-500/10 transition-colors cursor-pointer">
+                                <h4 class="text-emerald-400 font-bold text-sm">Composition</h4>
+                                <p class="text-xs text-slate-400 mt-1">User owns BankAccount</p>
+                            </div>
+                            <div class="bg-slate-800/50 p-4 rounded-lg border border-violet-500/30 hover:bg-violet-500/10 transition-colors cursor-pointer">
+                                <h4 class="text-violet-400 font-bold text-sm">Aggregation</h4>
+                                <p class="text-xs text-slate-400 mt-1">BankSystem manages User**</p>
+                            </div>
+                            <div class="bg-slate-800/50 p-4 rounded-lg border border-amber-500/30 hover:bg-amber-500/10 transition-colors cursor-pointer">
+                                <h4 class="text-amber-400 font-bold text-sm">Facade Pattern</h4>
+                                <p class="text-xs text-slate-400 mt-1">BankSystem interface</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -435,94 +669,85 @@
         </section>
 
         <!-- INHERITANCE SECTION -->
-        <section id="inheritance" class="space-y-8">
-            <div class="border-l-4 border-cyan-500 pl-6">
+        <section id="inheritance" class="space-y-8 scroll-section" data-section="inheritance">
+            <div class="border-l-4 border-cyan-500 pl-6 reveal-left">
                 <h2 class="text-3xl font-bold text-white">Inheritance Hierarchy</h2>
                 <p class="text-slate-400 mt-2 text-lg">
-                    The <span class="text-cyan-400 font-mono">Person</span> abstract base class defines the contract for all system entities through pure virtual methods.
+                    The <span class="text-cyan-400 font-mono">Person</span> abstract base class defines the contract through pure virtual methods.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Inheritance Diagram -->
-                <div class="glass-card rounded-2xl p-6">
+                <!-- Virtual Function Table -->
+                <div class="glass-card rounded-2xl p-6 reveal-left">
                     <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
                         <span class="w-3 h-3 rounded-full bg-cyan-500"></span>
                         Virtual Function Table
                     </h3>
 
                     <div class="space-y-4">
-                        <!-- Person vtable -->
-                        <div class="bg-slate-900 rounded-lg p-4 border border-cyan-500/30">
-                            <div class="text-cyan-400 font-mono text-sm mb-3">Person (Abstract)</div>
-                            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-                                <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">virtual ~Person()</div>
-                                <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
-                                <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">displayDetails()</div>
-                                <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
-                                <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">authenticate()</div>
-                                <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
-                                <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">getName()</div>
-                                <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
-                                <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">getPassword()</div>
-                                <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
+                        <div class="bg-slate-900 rounded-lg p-4 border border-cyan-500/30 click-reveal">
+                            <div class="hidden-content">
+                                <div class="text-cyan-400 font-mono text-sm mb-3">Person (Abstract)</div>
+                                <div class="grid grid-cols-2 gap-2 text-xs font-mono stagger-children">
+                                    <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">virtual ~Person()</div>
+                                    <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
+                                    <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">displayDetails()</div>
+                                    <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
+                                    <div class="bg-cyan-900/30 p-2 rounded text-cyan-200">authenticate()</div>
+                                    <div class="bg-violet-900/30 p-2 rounded text-violet-200">= 0 (pure)</div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="flex justify-center">
-                            <div class="text-2xl text-cyan-500">↓</div>
-                        </div>
+                        <div class="flex justify-center text-2xl text-cyan-500 reveal">↓</div>
 
-                        <!-- Derived vtables -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-slate-900 rounded-lg p-3 border border-emerald-500/30">
+                        <div class="grid grid-cols-2 gap-4 stagger-children">
+                            <div class="bg-slate-900 rounded-lg p-3 border border-emerald-500/30 hover:border-emerald-400 transition-colors cursor-pointer">
                                 <div class="text-emerald-400 font-mono text-sm mb-2">User</div>
                                 <div class="text-[10px] text-emerald-300 font-mono space-y-1">
                                     <div>~User() → delete account</div>
-                                    <div>displayDetails() → show user info</div>
-                                    <div>authenticate() → check password</div>
+                                    <div>displayDetails() → user info</div>
                                 </div>
                             </div>
-                            <div class="bg-slate-900 rounded-lg p-3 border border-violet-500/30">
+                            <div class="bg-slate-900 rounded-lg p-3 border border-violet-500/30 hover:border-violet-400 transition-colors cursor-pointer">
                                 <div class="text-violet-400 font-mono text-sm mb-2">BankManager</div>
                                 <div class="text-[10px] text-violet-300 font-mono space-y-1">
                                     <div>~BankManager() → base dtor</div>
-                                    <div>displayDetails() → show mgr info</div>
-                                    <div>authenticate() → check password</div>
+                                    <div>displayDetails() → mgr info</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Why Virtual Destructor -->
-                <div class="glass-card rounded-2xl p-6">
+                <!-- Why Virtual Destructor - Interactive -->
+                <div class="glass-card rounded-2xl p-6 reveal-right">
                     <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
                         <span class="w-3 h-3 rounded-full bg-rose-500"></span>
                         Why Virtual Destructor?
                     </h3>
 
                     <div class="space-y-4">
-                        <!-- Problem -->
-                        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-lg relative">
+                        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-lg relative click-reveal">
                             <div class="absolute -top-3 left-4 bg-slate-900 px-2 text-xs text-red-400 font-bold">WITHOUT virtual ~Person()</div>
-                            <div class="code-block p-3 rounded font-mono text-xs mt-2">
-                                <div class="text-slate-400">Person* p = new User("Alice", "pwd", 100);</div>
-                                <div class="text-red-400">delete p; // Only calls ~Person()</div>
-                                <div class="text-red-300">// User::account NEVER deleted!</div>
-                                <div class="text-red-500 font-bold">// MEMORY LEAK!</div>
+                            <div class="hidden-content">
+                                <div class="code-block p-3 rounded font-mono text-xs mt-2">
+                                    <div class="text-slate-400">Person* p = new User("Alice", "pwd", 100);</div>
+                                    <div class="text-red-400">delete p; // Only calls ~Person()</div>
+                                    <div class="text-red-500 font-bold mt-2">// MEMORY LEAK! account never deleted</div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Solution -->
-                        <div class="bg-emerald-900/20 border border-emerald-500/30 p-4 rounded-lg relative">
+                        <div class="bg-emerald-900/20 border border-emerald-500/30 p-4 rounded-lg relative click-reveal">
                             <div class="absolute -top-3 left-4 bg-slate-900 px-2 text-xs text-emerald-400 font-bold">WITH virtual ~Person()</div>
-                            <div class="code-block p-3 rounded font-mono text-xs mt-2">
-                                <div class="text-slate-400">Person* p = new User("Alice", "pwd", 100);</div>
-                                <div class="text-emerald-400">delete p; // Calls ~User() first</div>
-                                <div class="text-emerald-300">// ~User() → delete account</div>
-                                <div class="text-emerald-300">// ~Person() called automatically</div>
-                                <div class="text-emerald-500 font-bold">// SAFE! No memory leak.</div>
+                            <div class="hidden-content">
+                                <div class="code-block p-3 rounded font-mono text-xs mt-2">
+                                    <div class="text-slate-400">Person* p = new User("Alice", "pwd", 100);</div>
+                                    <div class="text-emerald-400">delete p; // Calls ~User() first</div>
+                                    <div class="text-emerald-500 font-bold mt-2">// SAFE! No memory leak</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -531,393 +756,241 @@
         </section>
 
         <!-- COMPOSITION SECTION -->
-        <section id="composition" class="space-y-8">
-            <div class="border-l-4 border-emerald-500 pl-6">
+        <section id="composition" class="space-y-8 scroll-section" data-section="composition">
+            <div class="border-l-4 border-emerald-500 pl-6 reveal-left">
                 <h2 class="text-3xl font-bold text-white">Composition Relationships</h2>
                 <p class="text-slate-400 mt-2 text-lg">
-                    Ownership chains where the container is responsible for the lifecycle of contained objects.
+                    Ownership chains — the container manages the lifecycle of contained objects.
                 </p>
             </div>
 
-            <div class="glass-card rounded-2xl p-8">
-                <h3 class="text-xl font-bold text-white mb-6">Ownership Chain Visualization</h3>
+            <div class="glass-card rounded-2xl p-8 reveal">
+                <h3 class="text-xl font-bold text-white mb-6">Ownership Chain <span class="text-xs text-slate-400">(Click each block to trace)</span></h3>
 
                 <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8">
-                    <!-- Ownership Chain -->
                     <div class="flex-1 space-y-4">
-                        <!-- BankSystem -->
-                        <div class="memory-block bg-amber-900/20 border-2 border-amber-500/50 p-4 rounded-lg">
+                        <!-- Animated ownership chain -->
+                        <div class="memory-block bg-amber-900/20 border-2 border-amber-500/50 p-4 rounded-lg step-item active" data-chain="1">
                             <div class="flex items-center justify-between">
                                 <div class="font-bold text-amber-400">BankSystem</div>
                                 <div class="text-xs text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded">Facade</div>
                             </div>
                             <div class="mt-2 font-mono text-xs text-slate-300">
                                 <div>User** users = new User*[capacity]</div>
-                                <div>BankManager** managers = new BankManager*[capacity]</div>
                             </div>
-                            <div class="mt-2 text-[10px] text-amber-300">~BankSystem() deletes all User* and BankManager* then delete[] arrays</div>
                         </div>
 
-                        <div class="flex justify-center text-emerald-500 text-xl">↓ owns</div>
+                        <div class="flex justify-center text-emerald-500 text-xl reveal">↓ owns</div>
 
-                        <!-- User -->
-                        <div class="memory-block bg-emerald-900/20 border-2 border-emerald-500/50 p-4 rounded-lg ml-8">
+                        <div class="memory-block bg-emerald-900/20 border-2 border-emerald-500/50 p-4 rounded-lg ml-8 step-item" data-chain="2">
                             <div class="flex items-center justify-between">
-                                <div class="font-bold text-emerald-400">User (each instance)</div>
+                                <div class="font-bold text-emerald-400">User</div>
                                 <div class="text-xs text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded">Composition</div>
                             </div>
-                            <div class="mt-2 font-mono text-xs text-slate-300">
-                                <div>BankAccount* account = new BankAccount(balance)</div>
-                            </div>
-                            <div class="mt-2 text-[10px] text-emerald-300">~User() { delete account; }</div>
+                            <div class="mt-2 font-mono text-xs text-slate-300">BankAccount* account = new BankAccount(balance)</div>
                         </div>
 
-                        <div class="flex justify-center text-emerald-500 text-xl ml-8">↓ owns</div>
+                        <div class="flex justify-center text-emerald-500 text-xl ml-8 reveal">↓ owns</div>
 
-                        <!-- BankAccount -->
-                        <div class="memory-block bg-cyan-900/20 border-2 border-cyan-500/50 p-4 rounded-lg ml-16">
-                            <div class="flex items-center justify-between">
-                                <div class="font-bold text-cyan-400">BankAccount</div>
-                                <div class="text-xs text-cyan-300 bg-cyan-500/20 px-2 py-0.5 rounded">Composition</div>
-                            </div>
-                            <div class="mt-2 font-mono text-xs text-slate-300">
-                                <div>Transaction* transactionHistory = new Transaction[capacity]</div>
-                            </div>
-                            <div class="mt-2 text-[10px] text-cyan-300">~BankAccount() { delete[] transactionHistory; }</div>
+                        <div class="memory-block bg-cyan-900/20 border-2 border-cyan-500/50 p-4 rounded-lg ml-16 step-item" data-chain="3">
+                            <div class="font-bold text-cyan-400">BankAccount</div>
+                            <div class="mt-2 font-mono text-xs text-slate-300">Transaction* transactionHistory = new Transaction[capacity]</div>
                         </div>
 
-                        <div class="flex justify-center text-cyan-500 text-xl ml-16">↓ contains</div>
+                        <div class="flex justify-center text-cyan-500 text-xl ml-16 reveal">↓ contains</div>
 
-                        <!-- Transaction Array -->
-                        <div class="memory-block bg-violet-900/20 border border-violet-500/50 p-3 rounded-lg ml-24">
-                            <div class="font-bold text-violet-400 text-sm">Transaction[] (Dynamic Array)</div>
+                        <div class="memory-block bg-violet-900/20 border border-violet-500/50 p-3 rounded-lg ml-24 step-item" data-chain="4">
+                            <div class="font-bold text-violet-400 text-sm">Transaction[]</div>
                             <div class="mt-2 grid grid-cols-4 gap-1">
-                                <div class="bg-violet-500/20 p-2 rounded text-center text-[10px] text-violet-200">[Tx 0]</div>
-                                <div class="bg-violet-500/20 p-2 rounded text-center text-[10px] text-violet-200">[Tx 1]</div>
-                                <div class="bg-violet-500/20 p-2 rounded text-center text-[10px] text-violet-200">[Tx 2]</div>
+                                <div class="bg-violet-500/20 p-2 rounded text-center text-[10px] text-violet-200">[0]</div>
+                                <div class="bg-violet-500/20 p-2 rounded text-center text-[10px] text-violet-200">[1]</div>
+                                <div class="bg-violet-500/20 p-2 rounded text-center text-[10px] text-violet-200">[2]</div>
                                 <div class="bg-slate-700/50 p-2 rounded text-center text-[10px] text-slate-500">...</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Destruction Order -->
-                    <div class="w-80 bg-slate-900 rounded-xl p-5 border border-slate-700">
+                    <!-- Destruction Order Panel -->
+                    <div class="w-80 bg-slate-900 rounded-xl p-5 border border-slate-700 reveal-right">
                         <h4 class="font-bold text-white mb-4 flex items-center gap-2">
                             <span class="text-rose-500">⚠</span> Destruction Order
                         </h4>
-                        <div class="space-y-2 text-xs font-mono">
-                            <div class="flex items-center gap-2">
+                        <div id="destruction-steps" class="space-y-2 text-xs font-mono">
+                            <div class="destruction-step flex items-center gap-2 opacity-30 transition-opacity" data-step="1">
                                 <span class="text-rose-400 w-4">1.</span>
                                 <span class="text-slate-300">~BankSystem() called</span>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="destruction-step flex items-center gap-2 opacity-30 transition-opacity" data-step="2">
                                 <span class="text-rose-400 w-4">2.</span>
-                                <span class="text-slate-300">for each users[i]: delete users[i]</span>
+                                <span class="text-slate-300">delete users[i]</span>
                             </div>
-                            <div class="flex items-center gap-2 ml-4">
+                            <div class="destruction-step flex items-center gap-2 ml-4 opacity-30 transition-opacity" data-step="3">
                                 <span class="text-emerald-400 w-4">→</span>
-                                <span class="text-slate-300">~User() called</span>
+                                <span class="text-slate-300">~User() → delete account</span>
                             </div>
-                            <div class="flex items-center gap-2 ml-8">
+                            <div class="destruction-step flex items-center gap-2 ml-8 opacity-30 transition-opacity" data-step="4">
                                 <span class="text-cyan-400 w-4">→</span>
-                                <span class="text-slate-300">delete account</span>
+                                <span class="text-slate-300">~BankAccount() → delete[] history</span>
                             </div>
-                            <div class="flex items-center gap-2 ml-12">
-                                <span class="text-violet-400 w-4">→</span>
-                                <span class="text-slate-300">~BankAccount()</span>
-                            </div>
-                            <div class="flex items-center gap-2 ml-16">
-                                <span class="text-pink-400 w-4">→</span>
-                                <span class="text-slate-300">delete[] transactionHistory</span>
-                            </div>
-                            <div class="flex items-center gap-2">
+                            <div class="destruction-step flex items-center gap-2 opacity-30 transition-opacity" data-step="5">
                                 <span class="text-rose-400 w-4">3.</span>
                                 <span class="text-slate-300">delete[] users</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-rose-400 w-4">4.</span>
-                                <span class="text-slate-300">Same for managers...</span>
-                            </div>
                         </div>
-                        <div class="mt-4 p-2 bg-emerald-900/30 rounded border border-emerald-500/30 text-[10px] text-emerald-300">
-                            All memory freed in reverse order of allocation. No leaks!
-                        </div>
+                        <button id="animate-destruction" class="mt-4 w-full py-2 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 rounded text-rose-300 text-xs transition-colors">
+                            ▶ Animate Destruction
+                        </button>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- MEMORY MANAGEMENT SECTION -->
-        <section id="memory" class="space-y-8">
-            <div class="border-l-4 border-rose-500 pl-6">
-                <h2 class="text-3xl font-bold text-white">Memory Management Strategy</h2>
+        <section id="memory" class="space-y-8 scroll-section" data-section="memory">
+            <div class="border-l-4 border-rose-500 pl-6 reveal-left">
+                <h2 class="text-3xl font-bold text-white">Memory Management</h2>
                 <p class="text-slate-400 mt-2 text-lg">
-                    Rule of Three implementation and dynamic array growth using exponential doubling strategy.
+                    Rule of Three and dynamic array growth with exponential doubling.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Rule of Three -->
-                <div class="glass-card rounded-2xl p-6">
+                <div class="glass-card rounded-2xl p-6 reveal-left">
                     <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
                         <span class="w-3 h-3 rounded-full bg-rose-500"></span>
-                        Rule of Three Implementation
+                        Rule of Three
                     </h3>
 
                     <div class="space-y-4">
-                        <!-- User Class -->
                         <div class="bg-slate-900 rounded-lg p-4 border border-emerald-500/30">
                             <div class="text-emerald-400 font-mono text-sm mb-3">User Class</div>
-                            <div class="space-y-2">
-                                <div class="code-block p-2 rounded text-xs font-mono">
-                                    <div class="text-slate-500">// 1. Constructor</div>
-                                    <div class="text-emerald-300">User(name, pwd, bal) {</div>
-                                    <div class="text-white ml-4">account = <span class="text-rose-400">new</span> BankAccount(bal);</div>
-                                    <div class="text-emerald-300">}</div>
+                            <div class="space-y-2 stagger-children">
+                                <div class="code-block p-2 rounded text-xs font-mono click-reveal">
+                                    <div class="hidden-content">
+                                        <div class="text-slate-500">// 1. Constructor</div>
+                                        <div class="text-emerald-300">User(name, pwd, bal) {</div>
+                                        <div class="text-white ml-4">account = <span class="text-rose-400">new</span> BankAccount(bal);</div>
+                                        <div class="text-emerald-300">}</div>
+                                    </div>
                                 </div>
-                                <div class="code-block p-2 rounded text-xs font-mono">
-                                    <div class="text-slate-500">// 2. Copy Constructor (DEEP COPY)</div>
-                                    <div class="text-emerald-300">User(const User& orig) : Person(orig) {</div>
-                                    <div class="text-white ml-4">account = <span class="text-rose-400">new</span> BankAccount(*orig.account);</div>
-                                    <div class="text-emerald-300">}</div>
+                                <div class="code-block p-2 rounded text-xs font-mono click-reveal">
+                                    <div class="hidden-content">
+                                        <div class="text-slate-500">// 2. Copy Constructor (DEEP COPY)</div>
+                                        <div class="text-emerald-300">User(const User& orig) {</div>
+                                        <div class="text-white ml-4">account = <span class="text-rose-400">new</span> BankAccount(*orig.account);</div>
+                                        <div class="text-emerald-300">}</div>
+                                    </div>
                                 </div>
-                                <div class="code-block p-2 rounded text-xs font-mono">
-                                    <div class="text-slate-500">// 3. Destructor</div>
-                                    <div class="text-emerald-300">~User() {</div>
-                                    <div class="text-white ml-4"><span class="text-rose-400">delete</span> account;</div>
-                                    <div class="text-emerald-300">}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- BankAccount Class -->
-                        <div class="bg-slate-900 rounded-lg p-4 border border-cyan-500/30">
-                            <div class="text-cyan-400 font-mono text-sm mb-3">BankAccount Class</div>
-                            <div class="space-y-2">
-                                <div class="code-block p-2 rounded text-xs font-mono">
-                                    <div class="text-slate-500">// Copy Constructor</div>
-                                    <div class="text-cyan-300">BankAccount(const BankAccount& orig) {</div>
-                                    <div class="text-white ml-4">transactionHistory = <span class="text-rose-400">new</span> Transaction[orig.capacity];</div>
-                                    <div class="text-white ml-4"><span class="text-violet-400">for</span>(i = 0; i &lt; orig.count; i++)</div>
-                                    <div class="text-white ml-8">transactionHistory[i] = orig.transactionHistory[i];</div>
-                                    <div class="text-cyan-300">}</div>
-                                </div>
-                                <div class="code-block p-2 rounded text-xs font-mono">
-                                    <div class="text-slate-500">// Destructor</div>
-                                    <div class="text-cyan-300">~BankAccount() {</div>
-                                    <div class="text-white ml-4"><span class="text-rose-400">delete[]</span> transactionHistory;</div>
-                                    <div class="text-cyan-300">}</div>
+                                <div class="code-block p-2 rounded text-xs font-mono click-reveal">
+                                    <div class="hidden-content">
+                                        <div class="text-slate-500">// 3. Destructor</div>
+                                        <div class="text-emerald-300">~User() {</div>
+                                        <div class="text-white ml-4"><span class="text-rose-400">delete</span> account;</div>
+                                        <div class="text-emerald-300">}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Stack vs Heap -->
-                <div class="glass-card rounded-2xl p-6">
+                <!-- Dynamic Array Growth - Interactive -->
+                <div class="glass-card rounded-2xl p-6 reveal-right">
                     <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-violet-500"></span>
-                        Stack vs. Heap Allocation
+                        <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                        Dynamic Array Growth
                     </h3>
 
-                    <div class="flex flex-col md:flex-row gap-4 h-80">
-                        <!-- Stack -->
-                        <div class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-4 flex flex-col-reverse gap-2 relative overflow-hidden">
-                            <div class="absolute top-2 left-0 w-full text-center text-xs font-mono text-rose-500 font-bold uppercase tracking-widest">Stack Memory</div>
-
-                            <div class="bg-rose-900/30 border border-rose-500/50 p-2 rounded text-xs text-rose-200 font-mono">
-                                main() Frame
-                                <div class="text-[10px] text-rose-400">BankSystem bankSystem;</div>
-                                <div class="text-[10px] text-rose-400">// bankSystem on stack</div>
-                            </div>
-                            <div class="bg-rose-900/30 border border-rose-500/50 p-2 rounded text-xs text-rose-200 font-mono">
-                                createAccount() Frame
-                                <div class="text-[10px] text-rose-400">string name; // stack</div>
-                                <div class="text-[10px] text-rose-400">double balance; // stack</div>
-                            </div>
-                        </div>
-
-                        <!-- Connector -->
-                        <div class="hidden md:flex flex-col justify-center items-center gap-1 text-slate-500">
-                            <div class="w-16 h-px bg-slate-600 border-t border-dashed"></div>
-                            <span class="text-[10px] uppercase font-bold">Pointers</span>
-                            <div class="w-16 h-px bg-slate-600 border-t border-dashed"></div>
-                            <div class="text-xl">➔</div>
-                        </div>
-
-                        <!-- Heap -->
-                        <div class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-4 flex flex-col gap-2 relative overflow-y-auto">
-                            <div class="absolute top-2 left-0 w-full text-center text-xs font-mono text-cyan-500 font-bold uppercase tracking-widest">Heap Memory</div>
-
-                            <div class="mt-8 bg-amber-900/30 border border-amber-500/50 p-2 rounded text-xs text-amber-200 font-mono">
-                                User*[] (dynamic array)
-                            </div>
-                            <div class="bg-cyan-900/30 border border-cyan-500/50 p-2 rounded text-xs text-cyan-200 font-mono ml-2">
-                                User Object (Alice)
-                                <div class="text-[10px] text-emerald-400 ml-2">➔ account ptr</div>
-                            </div>
-                            <div class="bg-emerald-900/30 border border-emerald-500/50 p-2 rounded text-xs text-emerald-200 font-mono ml-4">
-                                BankAccount
-                                <div class="text-[10px] text-violet-400 ml-2">➔ transactionHistory ptr</div>
-                            </div>
-                            <div class="bg-violet-900/30 border border-violet-500/50 p-2 rounded text-xs text-violet-200 font-mono ml-6 grid grid-cols-3 gap-1">
-                                <div class="bg-violet-500/20 text-center rounded">[Tx]</div>
-                                <div class="bg-violet-500/20 text-center rounded">[Tx]</div>
-                                <div class="bg-violet-500/20 text-center rounded">[Tx]</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dynamic Array Growth -->
-            <div class="glass-card rounded-2xl p-6">
-                <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-amber-500"></span>
-                    Dynamic Array Growth Strategy (Exponential Doubling)
-                </h3>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Algorithm -->
-                    <div class="bg-slate-900 rounded-xl p-5 border border-slate-700">
-                        <div class="font-mono text-sm text-amber-400 mb-4">growTransactionArray()</div>
-                        <div class="code-block p-4 rounded text-xs font-mono space-y-1">
-                            <div class="text-slate-500">// Double capacity (or start at 1)</div>
-                            <div class="text-white">capacity = (capacity == 0) ? 1 : capacity * 2;</div>
-                            <div class="text-white mt-2"></div>
-                            <div class="text-slate-500">// Allocate new array</div>
-                            <div class="text-white">Transaction* newArr = <span class="text-rose-400">new</span> Transaction[capacity];</div>
-                            <div class="text-white mt-2"></div>
-                            <div class="text-slate-500">// Copy existing elements</div>
-                            <div class="text-white"><span class="text-violet-400">for</span>(i = 0; i &lt; count; i++)</div>
-                            <div class="text-white ml-4">newArr[i] = transactionHistory[i];</div>
-                            <div class="text-white mt-2"></div>
-                            <div class="text-slate-500">// Free old memory</div>
-                            <div class="text-white"><span class="text-rose-400">delete[]</span> transactionHistory;</div>
-                            <div class="text-white mt-2"></div>
-                            <div class="text-slate-500">// Update pointer</div>
-                            <div class="text-white">transactionHistory = newArr;</div>
-                        </div>
-                    </div>
-
-                    <!-- Visualization -->
                     <div class="space-y-4">
-                        <div class="text-sm text-slate-400">Growth Visualization:</div>
-
-                        <div class="space-y-3">
-                            <div class="flex items-center gap-3">
+                        <div id="array-visualization" class="space-y-3">
+                            <div class="array-step flex items-center gap-3 opacity-30 transition-all" data-capacity="1">
                                 <div class="w-16 text-xs text-slate-500">cap: 1</div>
                                 <div class="flex gap-1">
                                     <div class="w-8 h-8 bg-amber-500/50 rounded flex items-center justify-center text-xs">Tx</div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3">
+                            <div class="array-step flex items-center gap-3 opacity-30 transition-all" data-capacity="2">
                                 <div class="w-16 text-xs text-slate-500">cap: 2</div>
                                 <div class="flex gap-1">
                                     <div class="w-8 h-8 bg-amber-500/50 rounded flex items-center justify-center text-xs">Tx</div>
                                     <div class="w-8 h-8 bg-amber-500/50 rounded flex items-center justify-center text-xs">Tx</div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3">
+                            <div class="array-step flex items-center gap-3 opacity-30 transition-all" data-capacity="4">
                                 <div class="w-16 text-xs text-slate-500">cap: 4</div>
                                 <div class="flex gap-1">
                                     <div class="w-8 h-8 bg-amber-500/50 rounded flex items-center justify-center text-xs">Tx</div>
                                     <div class="w-8 h-8 bg-amber-500/50 rounded flex items-center justify-center text-xs">Tx</div>
                                     <div class="w-8 h-8 bg-amber-500/50 rounded flex items-center justify-center text-xs">Tx</div>
-                                    <div class="w-8 h-8 bg-slate-700 rounded flex items-center justify-center text-xs text-slate-500">-</div>
+                                    <div class="w-8 h-8 bg-slate-700 rounded"></div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3">
+                            <div class="array-step flex items-center gap-3 opacity-30 transition-all" data-capacity="8">
                                 <div class="w-16 text-xs text-slate-500">cap: 8</div>
-                                <div class="flex gap-1">
+                                <div class="flex gap-1 flex-wrap">
                                     <div class="w-8 h-8 bg-amber-500/50 rounded flex items-center justify-center text-xs">Tx</div>
                                     <div class="w-8 h-8 bg-amber-500/50 rounded flex items-center justify-center text-xs">Tx</div>
                                     <div class="w-8 h-8 bg-amber-500/50 rounded flex items-center justify-center text-xs">Tx</div>
                                     <div class="w-8 h-8 bg-amber-500/50 rounded flex items-center justify-center text-xs">Tx</div>
                                     <div class="w-8 h-8 bg-amber-500/50 rounded flex items-center justify-center text-xs">Tx</div>
-                                    <div class="w-8 h-8 bg-slate-700 rounded flex items-center justify-center text-xs text-slate-500">-</div>
-                                    <div class="w-8 h-8 bg-slate-700 rounded flex items-center justify-center text-xs text-slate-500">-</div>
-                                    <div class="w-8 h-8 bg-slate-700 rounded flex items-center justify-center text-xs text-slate-500">-</div>
+                                    <div class="w-8 h-8 bg-slate-700 rounded"></div>
+                                    <div class="w-8 h-8 bg-slate-700 rounded"></div>
+                                    <div class="w-8 h-8 bg-slate-700 rounded"></div>
                                 </div>
                             </div>
                         </div>
-
+                        <button id="animate-growth" class="w-full py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 rounded text-amber-300 text-xs transition-colors">
+                            ▶ Animate Growth
+                        </button>
                         <div class="p-3 bg-emerald-900/20 rounded border border-emerald-500/30 text-xs text-emerald-300">
-                            <span class="font-bold">O(1) amortized insertion</span> — occasional O(n) copy when growing, but amortized to O(1) per insertion.
+                            <span class="font-bold">O(1) amortized</span> — double capacity when full
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Deep Copy Diagram -->
-            <div class="glass-card rounded-2xl p-6">
-                <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-                    Deep Copy vs Shallow Copy
-                </h3>
+            <!-- Deep vs Shallow Copy -->
+            <div class="glass-card rounded-2xl p-6 reveal">
+                <h3 class="text-xl font-bold text-white mb-6">Deep Copy vs Shallow Copy</h3>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Problem: Shallow Copy -->
-                    <div class="bg-red-900/20 border border-red-500/30 p-5 rounded-lg relative">
-                        <div class="absolute -top-3 left-4 bg-slate-900 px-2 text-xs text-red-400 font-bold">SHALLOW COPY (DANGEROUS)</div>
-                        <div class="mt-2 space-y-4">
-                            <div class="code-block p-3 rounded font-mono text-xs">
-                                <div class="text-slate-400">User userA("Alice", "pwd", 100);</div>
-                                <div class="text-red-400">User userB = userA; // Default copy</div>
-                            </div>
+                    <div class="bg-red-900/20 border border-red-500/30 p-5 rounded-lg relative click-reveal">
+                        <div class="absolute -top-3 left-4 bg-slate-900 px-2 text-xs text-red-400 font-bold">SHALLOW (DANGER)</div>
+                        <div class="hidden-content mt-2 space-y-4">
                             <div class="flex items-center justify-around text-sm">
                                 <div class="text-center">
                                     <div class="border border-slate-600 p-3 rounded bg-slate-800">userA</div>
-                                    <div class="text-[10px] text-slate-400 mt-1">account*</div>
                                 </div>
-                                <div class="flex flex-col items-center">
-                                    <div class="w-12 h-px bg-red-500"></div>
-                                    <div class="h-8 w-px bg-red-500"></div>
-                                </div>
+                                <div class="text-red-500">→</div>
                                 <div class="text-center">
-                                    <div class="border-2 border-red-500 p-3 rounded bg-red-900/30 text-red-300">Same BankAccount</div>
-                                    <div class="text-[10px] text-red-400 mt-1">SHARED!</div>
+                                    <div class="border-2 border-red-500 p-3 rounded bg-red-900/30 text-red-300">SHARED Account</div>
                                 </div>
-                                <div class="flex flex-col items-center">
-                                    <div class="w-12 h-px bg-red-500"></div>
-                                    <div class="h-8 w-px bg-red-500"></div>
-                                </div>
+                                <div class="text-red-500">←</div>
                                 <div class="text-center">
                                     <div class="border border-slate-600 p-3 rounded bg-slate-800">userB</div>
-                                    <div class="text-[10px] text-slate-400 mt-1">account*</div>
                                 </div>
                             </div>
-                            <div class="text-center text-xs text-red-400">
-                                delete userA → userB.account becomes <span class="font-bold">DANGLING POINTER</span>
-                            </div>
+                            <div class="text-center text-xs text-red-400">Dangling pointer on deletion!</div>
                         </div>
                     </div>
 
-                    <!-- Solution: Deep Copy -->
-                    <div class="bg-emerald-900/20 border border-emerald-500/30 p-5 rounded-lg relative">
-                        <div class="absolute -top-3 left-4 bg-slate-900 px-2 text-xs text-emerald-400 font-bold">DEEP COPY (SAFE)</div>
-                        <div class="mt-2 space-y-4">
-                            <div class="code-block p-3 rounded font-mono text-xs">
-                                <div class="text-slate-400">User userA("Alice", "pwd", 100);</div>
-                                <div class="text-emerald-400">User userB = userA; // Our copy ctor</div>
-                            </div>
+                    <div class="bg-emerald-900/20 border border-emerald-500/30 p-5 rounded-lg relative click-reveal">
+                        <div class="absolute -top-3 left-4 bg-slate-900 px-2 text-xs text-emerald-400 font-bold">DEEP (SAFE)</div>
+                        <div class="hidden-content mt-2 space-y-4">
                             <div class="flex items-center justify-around text-sm">
                                 <div class="text-center">
                                     <div class="border border-slate-600 p-3 rounded bg-slate-800">userA</div>
-                                    <div class="text-[10px] text-slate-400 mt-1">account*</div>
-                                    <div class="mt-2 w-px h-4 bg-emerald-500 mx-auto"></div>
-                                    <div class="border border-emerald-500 p-2 rounded bg-emerald-900/30 text-emerald-300 text-xs">Account A</div>
+                                    <div class="text-emerald-500 my-1">↓</div>
+                                    <div class="border border-emerald-500 p-2 rounded bg-emerald-900/30 text-xs">Account A</div>
                                 </div>
                                 <div class="text-3xl text-slate-600">|</div>
                                 <div class="text-center">
                                     <div class="border border-slate-600 p-3 rounded bg-slate-800">userB</div>
-                                    <div class="text-[10px] text-slate-400 mt-1">account*</div>
-                                    <div class="mt-2 w-px h-4 bg-emerald-500 mx-auto"></div>
-                                    <div class="border border-emerald-500 p-2 rounded bg-emerald-900/30 text-emerald-300 text-xs">Account B</div>
+                                    <div class="text-emerald-500 my-1">↓</div>
+                                    <div class="border border-emerald-500 p-2 rounded bg-emerald-900/30 text-xs">Account B</div>
                                 </div>
                             </div>
-                            <div class="text-center text-xs text-emerald-400">
-                                Each User owns <span class="font-bold">SEPARATE</span> BankAccount. Safe deletion!
-                            </div>
+                            <div class="text-center text-xs text-emerald-400">Separate objects — safe!</div>
                         </div>
                     </div>
                 </div>
@@ -925,113 +998,54 @@
         </section>
 
         <!-- POLYMORPHISM SECTION -->
-        <section id="polymorphism" class="space-y-8">
-            <div class="border-l-4 border-violet-500 pl-6">
-                <h2 class="text-3xl font-bold text-white">Polymorphism in Action</h2>
-                <p class="text-slate-400 mt-2 text-lg">
-                    Runtime polymorphism through virtual functions allows treating User and BankManager uniformly via Person pointers.
-                </p>
+        <section id="polymorphism" class="space-y-8 scroll-section" data-section="polymorphism">
+            <div class="border-l-4 border-violet-500 pl-6 reveal-left">
+                <h2 class="text-3xl font-bold text-white">Polymorphism</h2>
+                <p class="text-slate-400 mt-2 text-lg">Runtime dispatch through virtual functions.</p>
             </div>
 
-            <div class="glass-card rounded-2xl p-6">
+            <div class="glass-card rounded-2xl p-6 reveal">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Example Code -->
                     <div class="space-y-4">
-                        <h3 class="text-lg font-bold text-white">Polymorphic Behavior Example</h3>
+                        <h3 class="text-lg font-bold text-white">Polymorphic Code</h3>
                         <div class="bg-slate-900 rounded-xl p-5 border border-slate-700">
-                            <div class="code-block p-4 rounded font-mono text-xs space-y-1">
-                                <div class="text-slate-500">// Store different types in base pointer</div>
-                                <div class="text-white">Person* people[2];</div>
-                                <div class="text-white">people[0] = <span class="text-rose-400">new</span> User("Alice", "pwd", 500);</div>
-                                <div class="text-white">people[1] = <span class="text-rose-400">new</span> BankManager("Bob", "admin");</div>
-                                <div class="text-white mt-2"></div>
-                                <div class="text-slate-500">// Same function call, different behavior</div>
-                                <div class="text-white"><span class="text-violet-400">for</span>(int i = 0; i &lt; 2; i++) {</div>
-                                <div class="text-white ml-4">people[i]-><span class="text-cyan-400">displayDetails</span>();</div>
-                                <div class="text-slate-500 ml-4">// User: shows account info</div>
-                                <div class="text-slate-500 ml-4">// Manager: shows management info</div>
-                                <div class="text-white">}</div>
-                                <div class="text-white mt-2"></div>
-                                <div class="text-slate-500">// Proper cleanup via virtual destructor</div>
-                                <div class="text-white"><span class="text-violet-400">for</span>(int i = 0; i &lt; 2; i++) {</div>
-                                <div class="text-white ml-4"><span class="text-rose-400">delete</span> people[i];</div>
-                                <div class="text-slate-500 ml-4">// Calls correct destructor!</div>
-                                <div class="text-white">}</div>
+                            <div id="poly-code" class="code-block p-4 rounded font-mono text-xs space-y-1">
+                                <div class="code-line opacity-30" data-line="1">Person* people[2];</div>
+                                <div class="code-line opacity-30" data-line="2">people[0] = <span class="text-rose-400">new</span> User(...);</div>
+                                <div class="code-line opacity-30" data-line="3">people[1] = <span class="text-rose-400">new</span> BankManager(...);</div>
+                                <div class="code-line opacity-30" data-line="4"></div>
+                                <div class="code-line opacity-30" data-line="5"><span class="text-violet-400">for</span>(int i = 0; i < 2; i++)</div>
+                                <div class="code-line opacity-30" data-line="6">    people[i]-><span class="text-cyan-400">displayDetails</span>();</div>
+                                <div class="code-line opacity-30" data-line="7">    <span class="text-slate-500">// Different behavior!</span></div>
                             </div>
+                            <button id="animate-poly" class="mt-4 w-full py-2 bg-violet-500/20 hover:bg-violet-500/30 border border-violet-500/50 rounded text-violet-300 text-xs transition-colors">
+                                ▶ Step Through Code
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Virtual Table Visualization -->
                     <div class="space-y-4">
-                        <h3 class="text-lg font-bold text-white">Virtual Table (vtable)</h3>
+                        <h3 class="text-lg font-bold text-white">vtable Lookup</h3>
                         <div class="bg-slate-900 rounded-xl p-5 border border-violet-500/30">
-                            <div class="text-xs text-violet-400 font-mono mb-4">Runtime Method Resolution</div>
-
                             <div class="space-y-4">
-                                <div class="flex items-center gap-4">
+                                <div id="vtable-user" class="flex items-center gap-4 opacity-30 transition-opacity">
                                     <div class="w-24 text-right text-xs text-slate-400">people[0]</div>
                                     <div class="flex-1 bg-emerald-900/30 border border-emerald-500/30 p-2 rounded">
                                         <div class="text-xs text-emerald-400">User vtable</div>
-                                        <div class="text-[10px] text-slate-300 font-mono mt-1">
-                                            displayDetails → User::displayDetails()
-                                        </div>
+                                        <div class="text-[10px] text-slate-300 font-mono">→ User::displayDetails()</div>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-4">
+                                <div id="vtable-manager" class="flex items-center gap-4 opacity-30 transition-opacity">
                                     <div class="w-24 text-right text-xs text-slate-400">people[1]</div>
                                     <div class="flex-1 bg-violet-900/30 border border-violet-500/30 p-2 rounded">
                                         <div class="text-xs text-violet-400">BankManager vtable</div>
-                                        <div class="text-[10px] text-slate-300 font-mono mt-1">
-                                            displayDetails → BankManager::displayDetails()
-                                        </div>
+                                        <div class="text-[10px] text-slate-300 font-mono">→ BankManager::displayDetails()</div>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="mt-4 p-3 bg-slate-800 rounded text-xs text-slate-300">
-                                <span class="text-violet-400 font-bold">Key Insight:</span> The compiler doesn't know at compile time which displayDetails() to call. The vtable lookup happens at <span class="text-cyan-400">runtime</span>.
+                                <span class="text-violet-400 font-bold">Runtime dispatch:</span> vtable lookup determines method
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- STATIC MEMBERS SECTION -->
-        <section class="space-y-8">
-            <div class="border-l-4 border-pink-500 pl-6">
-                <h2 class="text-3xl font-bold text-white">Static Members</h2>
-                <p class="text-slate-400 mt-2 text-lg">
-                    Class-level state shared across all instances for tracking system-wide information.
-                </p>
-            </div>
-
-            <div class="glass-card rounded-2xl p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-slate-900 rounded-xl p-5 border border-pink-500/30">
-                        <div class="font-mono text-pink-400 text-sm mb-4">BankAccount Static Members</div>
-                        <div class="code-block p-4 rounded font-mono text-xs space-y-2">
-                            <div class="text-pink-300">static unsigned int activeAccountCount;</div>
-                            <div class="text-slate-500">// Tracks # of BankAccount instances</div>
-                            <div class="text-slate-500">// Incremented in constructor</div>
-                            <div class="text-slate-500">// Decremented in destructor</div>
-                            <div class="text-white mt-3"></div>
-                            <div class="text-pink-300">static unsigned int nextAccountNumber = 1000;</div>
-                            <div class="text-slate-500">// Auto-assigns unique IDs</div>
-                            <div class="text-slate-500">// 1000, 1001, 1002, ...</div>
-                        </div>
-                    </div>
-                    <div class="bg-slate-900 rounded-xl p-5 border border-slate-700">
-                        <div class="font-mono text-slate-400 text-sm mb-4">Usage Example</div>
-                        <div class="code-block p-4 rounded font-mono text-xs space-y-2">
-                            <div class="text-white">BankAccount acc1(100); <span class="text-slate-500">// accNum = 1000</span></div>
-                            <div class="text-white">BankAccount acc2(200); <span class="text-slate-500">// accNum = 1001</span></div>
-                            <div class="text-white">BankAccount acc3(300); <span class="text-slate-500">// accNum = 1002</span></div>
-                            <div class="text-white mt-2"></div>
-                            <div class="text-slate-500">// activeAccountCount = 3</div>
-                            <div class="text-white mt-2"></div>
-                            <div class="text-white">delete &acc1;</div>
-                            <div class="text-slate-500">// activeAccountCount = 2</div>
                         </div>
                     </div>
                 </div>
@@ -1039,80 +1053,46 @@
         </section>
 
         <!-- DATA VISUALIZATION SECTION -->
-        <section id="data" class="space-y-8">
-            <div class="border-l-4 border-violet-500 pl-6">
-                <h2 class="text-3xl font-bold text-white">System Data Analytics</h2>
-                <p class="text-slate-400 mt-2 text-lg">
-                    Analysis of the bank's current financial state from persistent file storage.
-                </p>
+        <section id="data" class="space-y-8 scroll-section" data-section="data">
+            <div class="border-l-4 border-violet-500 pl-6 reveal-left">
+                <h2 class="text-3xl font-bold text-white">System Analytics</h2>
+                <p class="text-slate-400 mt-2 text-lg">Financial data from persistent file storage.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-
-                <!-- Chart 1: User Balances -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 stagger-children">
                 <div class="md:col-span-8 glass-card p-6 rounded-2xl">
                     <h3 class="text-lg font-semibold text-white mb-2">User Account Balances</h3>
-                    <p class="text-sm text-slate-400 mb-6">Comparative view of liquid assets across all registered user accounts.</p>
-                    <div class="chart-container">
-                        <canvas id="balanceChart"></canvas>
-                    </div>
+                    <div class="chart-container"><canvas id="balanceChart"></canvas></div>
                 </div>
-
-                <!-- Chart 2: Transaction Volume -->
                 <div class="md:col-span-4 glass-card p-6 rounded-2xl">
                     <h3 class="text-lg font-semibold text-white mb-2">Transaction Activity</h3>
-                    <p class="text-sm text-slate-400 mb-6">Volume of withdrawals vs deposits.</p>
-                    <div class="chart-container">
-                        <canvas id="activityChart"></canvas>
-                    </div>
+                    <div class="chart-container"><canvas id="activityChart"></canvas></div>
                 </div>
-
-                <!-- Chart 3: Class Distribution -->
                 <div class="md:col-span-6 glass-card p-6 rounded-2xl">
                     <h3 class="text-lg font-semibold text-white mb-2">Object Allocation</h3>
-                    <p class="text-sm text-slate-400 mb-6">Distribution of heap-allocated objects by class type.</p>
-                    <div class="chart-container">
-                        <canvas id="allocationChart"></canvas>
-                    </div>
+                    <div class="chart-container"><canvas id="allocationChart"></canvas></div>
                 </div>
-
-                <!-- Chart 4: Memory Distribution -->
                 <div class="md:col-span-6 glass-card p-6 rounded-2xl">
                     <h3 class="text-lg font-semibold text-white mb-2">Memory Ownership</h3>
-                    <p class="text-sm text-slate-400 mb-6">Which classes manage dynamic memory.</p>
-                    <div class="chart-container">
-                        <canvas id="memoryChart"></canvas>
-                    </div>
+                    <div class="chart-container"><canvas id="memoryChart"></canvas></div>
                 </div>
-
             </div>
         </section>
 
         <!-- FOOTER -->
-        <footer class="border-t border-slate-800 pt-12 pb-8">
+        <footer class="border-t border-slate-800 pt-12 pb-8 reveal">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div>
-                    <h4 class="text-white font-bold mb-4">Core Technology Stack</h4>
+                    <h4 class="text-white font-bold mb-4">Technology Stack</h4>
                     <div class="flex flex-wrap gap-2">
                         <span class="px-3 py-1 rounded bg-slate-800 text-slate-300 text-xs font-mono border border-slate-700">C++17</span>
-                        <span class="px-3 py-1 rounded bg-slate-800 text-slate-300 text-xs font-mono border border-slate-700">Manual Memory Management</span>
-                        <span class="px-3 py-1 rounded bg-slate-800 text-slate-300 text-xs font-mono border border-slate-700">Dynamic Arrays</span>
+                        <span class="px-3 py-1 rounded bg-slate-800 text-slate-300 text-xs font-mono border border-slate-700">Manual Memory</span>
                         <span class="px-3 py-1 rounded bg-slate-800 text-slate-300 text-xs font-mono border border-slate-700">Rule of Three</span>
                         <span class="px-3 py-1 rounded bg-slate-800 text-slate-300 text-xs font-mono border border-slate-700">Virtual Functions</span>
-                        <span class="px-3 py-1 rounded bg-slate-800 text-slate-300 text-xs font-mono border border-slate-700">File I/O</span>
                     </div>
-                    <p class="text-slate-500 text-sm mt-4">
-                        No STL containers used. Pure pointer-based dynamic memory management demonstrating low-level C++ concepts.
-                    </p>
                 </div>
                 <div class="text-right">
-                    <div class="text-slate-500 text-sm">
-                        &copy; 2025 Bank Management System Project.<br>
-                        Comp Sci 371 Final Submission.
-                    </div>
-                    <div class="mt-4 text-xs text-slate-600">
-                        6 Classes | 5 Pure Virtual Methods | 3 Dynamic Arrays | Rule of Three
-                    </div>
+                    <div class="text-slate-500 text-sm">© 2025 Bank Management System<br>Comp Sci 371 Final</div>
                 </div>
             </div>
         </footer>
@@ -1120,6 +1100,284 @@
     </main>
 
     <script>
+        // ============================================
+        // SCROLL REVEAL ANIMATIONS
+        // ============================================
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .stagger-children');
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '-50px' });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ============================================
+        // SECTION TRACKING & PROGRESS BAR
+        // ============================================
+        const sections = document.querySelectorAll('.scroll-section');
+        const sectionDots = document.querySelectorAll('.section-dot');
+        const progressBar = document.getElementById('progress-bar');
+        const navLinks = document.querySelectorAll('.nav-link');
+        let currentSectionIndex = 0;
+
+        function updateProgress() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function updateActiveSection() {
+            let current = 0;
+            sections.forEach((section, index) => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= window.innerHeight / 2) {
+                    current = index;
+                }
+            });
+
+            currentSectionIndex = current;
+            sectionDots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === current);
+            });
+
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href').slice(1);
+                const section = sections[current];
+                link.classList.toggle('text-cyan-400', section && section.id === href);
+            });
+        }
+
+        window.addEventListener('scroll', () => {
+            updateProgress();
+            updateActiveSection();
+        });
+
+        // Section dot navigation
+        sectionDots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                sections[index]?.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // ============================================
+        // KEYBOARD NAVIGATION
+        // ============================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateSection(1);
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateSection(-1);
+            }
+        });
+
+        document.getElementById('next-section').addEventListener('click', () => navigateSection(1));
+        document.getElementById('prev-section').addEventListener('click', () => navigateSection(-1));
+
+        function navigateSection(direction) {
+            const newIndex = Math.max(0, Math.min(sections.length - 1, currentSectionIndex + direction));
+            sections[newIndex]?.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ============================================
+        // CLICK TO REVEAL
+        // ============================================
+        document.querySelectorAll('.click-reveal').forEach(el => {
+            el.addEventListener('click', () => {
+                el.classList.add('revealed');
+                el.querySelector('.stagger-children')?.classList.add('active');
+            });
+        });
+
+        // ============================================
+        // STEP-BY-STEP CLASS CARDS
+        // ============================================
+        document.querySelectorAll('.step-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const details = item.querySelector('.step-details');
+                const hint = item.querySelector('.step-hint');
+                if (details) {
+                    details.classList.toggle('hidden');
+                    if (hint) hint.textContent = details.classList.contains('hidden') ? 'Click to expand' : 'Click to collapse';
+                }
+                item.classList.toggle('active');
+            });
+        });
+
+        // ============================================
+        // EXPANDABLE SECTIONS
+        // ============================================
+        document.querySelectorAll('.expandable-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const targetId = header.dataset.target;
+                const content = document.getElementById(targetId);
+                if (content) {
+                    header.classList.toggle('collapsed');
+                    content.classList.toggle('collapsed');
+                }
+            });
+        });
+
+        // ============================================
+        // COUNT UP ANIMATION
+        // ============================================
+        const countElements = document.querySelectorAll('.count-up');
+        const countObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseInt(el.dataset.count);
+                    let current = 0;
+                    const increment = target / 20;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            el.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            el.textContent = Math.floor(current);
+                        }
+                    }, 50);
+                    countObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        countElements.forEach(el => countObserver.observe(el));
+
+        // ============================================
+        // DESTRUCTION ANIMATION
+        // ============================================
+        document.getElementById('animate-destruction')?.addEventListener('click', () => {
+            const steps = document.querySelectorAll('.destruction-step');
+            const chainBlocks = document.querySelectorAll('[data-chain]');
+            let currentStep = 0;
+
+            // Reset
+            steps.forEach(s => s.classList.add('opacity-30'));
+            chainBlocks.forEach(b => b.classList.remove('active'));
+            chainBlocks[0]?.classList.add('active');
+
+            const animate = () => {
+                if (currentStep < steps.length) {
+                    steps[currentStep].classList.remove('opacity-30');
+                    steps[currentStep].classList.add('opacity-100');
+
+                    // Highlight corresponding chain block
+                    const chainIndex = Math.min(currentStep, chainBlocks.length - 1);
+                    chainBlocks.forEach(b => b.classList.remove('active'));
+                    chainBlocks[chainIndex]?.classList.add('active');
+
+                    currentStep++;
+                    setTimeout(animate, 600);
+                }
+            };
+            animate();
+        });
+
+        // ============================================
+        // ARRAY GROWTH ANIMATION
+        // ============================================
+        document.getElementById('animate-growth')?.addEventListener('click', () => {
+            const steps = document.querySelectorAll('.array-step');
+            let currentStep = 0;
+
+            steps.forEach(s => {
+                s.classList.add('opacity-30');
+                s.style.transform = 'scale(0.95)';
+            });
+
+            const animate = () => {
+                if (currentStep < steps.length) {
+                    steps[currentStep].classList.remove('opacity-30');
+                    steps[currentStep].classList.add('opacity-100');
+                    steps[currentStep].style.transform = 'scale(1)';
+                    currentStep++;
+                    setTimeout(animate, 500);
+                }
+            };
+            animate();
+        });
+
+        // ============================================
+        // POLYMORPHISM CODE ANIMATION
+        // ============================================
+        document.getElementById('animate-poly')?.addEventListener('click', () => {
+            const lines = document.querySelectorAll('.code-line');
+            const vtableUser = document.getElementById('vtable-user');
+            const vtableManager = document.getElementById('vtable-manager');
+            let currentLine = 0;
+
+            lines.forEach(l => l.classList.add('opacity-30'));
+            vtableUser?.classList.add('opacity-30');
+            vtableManager?.classList.add('opacity-30');
+
+            const animate = () => {
+                if (currentLine < lines.length) {
+                    lines[currentLine].classList.remove('opacity-30');
+                    lines[currentLine].classList.add('opacity-100');
+
+                    // Highlight vtables at appropriate lines
+                    if (currentLine === 1) vtableUser?.classList.remove('opacity-30');
+                    if (currentLine === 2) vtableManager?.classList.remove('opacity-30');
+
+                    currentLine++;
+                    setTimeout(animate, 400);
+                }
+            };
+            animate();
+        });
+
+        // ============================================
+        // COMPOSITION LINE SVG
+        // ============================================
+        function positionCompositionLine() {
+            const userClass = document.getElementById('user-class');
+            const bankAccountRow = document.getElementById('bankaccount-row');
+            const svg = document.getElementById('composition-line-svg');
+            const path = document.getElementById('composition-path');
+
+            if (!userClass || !bankAccountRow || !svg || !path) return;
+
+            const parentContainer = document.querySelector('.min-w-\\[1000px\\]');
+            if (!parentContainer) return;
+
+            const userRect = userClass.getBoundingClientRect();
+            const bankAccountRect = bankAccountRow.getBoundingClientRect();
+            const containerRect = parentContainer.getBoundingClientRect();
+
+            svg.setAttribute('width', containerRect.width);
+            svg.setAttribute('height', Math.max(800, bankAccountRect.bottom - containerRect.top + 100));
+
+            const userRight = userRect.right - containerRect.left;
+            const bankAccountLeft = bankAccountRect.left - containerRect.left;
+            const userBottom = userRect.bottom - containerRect.top;
+            const bankAccountTop = bankAccountRect.top - containerRect.top;
+
+            const diamondX = userRight + 10;
+            const startY = userBottom + 8;
+            const midY = startY + 70;
+            const endY = bankAccountTop - 8;
+
+            const pathData = `M ${diamondX} ${startY} L ${diamondX} ${midY} L ${bankAccountLeft} ${midY} L ${bankAccountLeft} ${endY}`;
+            path.setAttribute('d', pathData);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(positionCompositionLine, 100);
+            setTimeout(positionCompositionLine, 500);
+        });
+        window.addEventListener('resize', () => setTimeout(positionCompositionLine, 100));
+
+        // ============================================
+        // CHARTS
+        // ============================================
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.font.family = "'Inter', sans-serif";
 
@@ -1136,197 +1394,73 @@
                     padding: 10,
                     cornerRadius: 8
                 },
-                legend: {
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20
-                    }
-                }
+                legend: { labels: { usePointStyle: true, padding: 20 } }
             }
         };
 
-        // Chart 1: User Balances
-        const balanceCtx = document.getElementById('balanceChart').getContext('2d');
-        const users = ['Alice', 'Bob', 'Charlie', 'Calvin'];
-        const balances = [500.00, 750.50, 10000.00, 100.00];
-
-        new Chart(balanceCtx, {
-            type: 'bar',
-            data: {
-                labels: users,
-                datasets: [{
-                    label: 'Account Balance ($)',
-                    data: balances,
-                    backgroundColor: [
-                        'rgba(59, 130, 246, 0.7)',
-                        'rgba(139, 92, 246, 0.7)',
-                        'rgba(16, 185, 129, 0.7)',
-                        'rgba(244, 63, 94, 0.7)'
-                    ],
-                    borderColor: [
-                        'rgb(59, 130, 246)',
-                        'rgb(139, 92, 246)',
-                        'rgb(16, 185, 129)',
-                        'rgb(244, 63, 94)'
-                    ],
-                    borderWidth: 1,
-                    borderRadius: 6,
-                }]
-            },
-            options: {
-                ...commonOptions,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: 'rgba(148, 163, 184, 0.1)' },
-                        ticks: { callback: value => '$' + value }
-                    },
-                    x: { grid: { display: false } }
+        // Initialize charts when section is visible
+        const chartObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.chartsInitialized) {
+                    entry.target.dataset.chartsInitialized = 'true';
+                    initCharts();
                 }
-            }
-        });
-
-        // Chart 2: Transaction Activity
-        const activityCtx = document.getElementById('activityChart').getContext('2d');
-        new Chart(activityCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Withdrawals', 'Deposits'],
-                datasets: [{
-                    data: [7, 1],
-                    backgroundColor: ['rgba(244, 63, 94, 0.8)', 'rgba(16, 185, 129, 0.8)'],
-                    borderColor: '#1e293b',
-                    borderWidth: 2,
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                ...commonOptions,
-                cutout: '70%',
-                plugins: {
-                    ...commonOptions.plugins,
-                    legend: { position: 'bottom', labels: { color: '#cbd5e1', usePointStyle: true } }
-                }
-            }
-        });
-
-        // Chart 3: Object Allocation
-        const allocationCtx = document.getElementById('allocationChart').getContext('2d');
-        new Chart(allocationCtx, {
-            type: 'bar',
-            data: {
-                labels: ['BankSystem', 'User', 'BankManager', 'BankAccount', 'Transaction', 'Person'],
-                datasets: [{
-                    label: 'Heap Allocations',
-                    data: [1, 4, 3, 4, 8, 0],
-                    backgroundColor: [
-                        'rgba(251, 191, 36, 0.7)',
-                        'rgba(16, 185, 129, 0.7)',
-                        'rgba(139, 92, 246, 0.7)',
-                        'rgba(56, 189, 248, 0.7)',
-                        'rgba(236, 72, 153, 0.7)',
-                        'rgba(100, 116, 139, 0.3)'
-                    ],
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                ...commonOptions,
-                indexAxis: 'y',
-                scales: {
-                    x: { beginAtZero: true, grid: { color: 'rgba(148, 163, 184, 0.1)' } },
-                    y: { grid: { display: false } }
-                }
-            }
-        });
-
-        // Chart 4: Memory Ownership
-        const memoryCtx = document.getElementById('memoryChart').getContext('2d');
-        new Chart(memoryCtx, {
-            type: 'polarArea',
-            data: {
-                labels: ['BankSystem (User**)', 'BankSystem (Manager**)', 'User (BankAccount*)', 'BankAccount (Transaction*)'],
-                datasets: [{
-                    data: [4, 3, 4, 8],
-                    backgroundColor: [
-                        'rgba(251, 191, 36, 0.6)',
-                        'rgba(139, 92, 246, 0.6)',
-                        'rgba(16, 185, 129, 0.6)',
-                        'rgba(236, 72, 153, 0.6)'
-                    ],
-                    borderColor: '#1e293b',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                ...commonOptions,
-                plugins: {
-                    ...commonOptions.plugins,
-                    legend: { position: 'bottom', labels: { color: '#cbd5e1', usePointStyle: true, font: { size: 10 } } }
-                }
-            }
-        });
-
-        // Position composition line dynamically using SVG
-        function positionCompositionLine() {
-            const userClass = document.getElementById('user-class');
-            const bankAccountRow = document.getElementById('bankaccount-row');
-            const svg = document.getElementById('composition-line-svg');
-            const path = document.getElementById('composition-path');
-
-            if (!userClass || !bankAccountRow || !svg || !path) return;
-
-            // Get the parent container (min-w-[1000px] relative container)
-            const parentContainer = document.querySelector('.min-w-\\[1000px\\]');
-            if (!parentContainer) return;
-
-            const userRect = userClass.getBoundingClientRect();
-            const bankAccountRect = bankAccountRow.getBoundingClientRect();
-            const containerRect = parentContainer.getBoundingClientRect();
-
-            // Set SVG size to cover the area
-            svg.setAttribute('width', containerRect.width);
-            svg.setAttribute('height', Math.max(800, bankAccountRect.bottom - containerRect.top + 100));
-
-            // Calculate positions relative to container
-            const userRight = userRect.right - containerRect.left;
-            const bankAccountLeft = bankAccountRect.left - containerRect.left;
-            const userBottom = userRect.bottom - containerRect.top;
-            const bankAccountTop = bankAccountRect.top - containerRect.top;
-
-            // Diamond is w-5 h-5 (20px), positioned at right edge, extends 10px to the right
-            // Path starts from User's right edge where diamond is (User's right edge + 10px for diamond center)
-            const diamondX = userRight + 10;
-            const startY = userBottom + 8; // Start from bottom of User box, slightly below
-            const verticalSpace = 70; // More vertical space for better visual separation
-            const midY = startY + verticalSpace; // Horizontal line position
-            const endY = bankAccountTop - 8; // End slightly above BankAccount box
-
-            // Create smooth path with proper spacing: 
-            // Start from User bottom (diamond area), go down, then horizontally, then down to BankAccount
-            const pathData = `M ${diamondX} ${startY} 
-                              L ${diamondX} ${midY} 
-                              L ${bankAccountLeft} ${midY} 
-                              L ${bankAccountLeft} ${endY}`;
-            path.setAttribute('d', pathData);
-        }
-
-        // Position line after page load and on resize
-        window.addEventListener('load', () => {
-            setTimeout(positionCompositionLine, 100);
-            setTimeout(positionCompositionLine, 500);
-        });
-        window.addEventListener('resize', () => {
-            setTimeout(positionCompositionLine, 100);
-        });
-        // Also try after DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                setTimeout(positionCompositionLine, 200);
             });
-        } else {
-            setTimeout(positionCompositionLine, 200);
+        }, { threshold: 0.1 });
+
+        const dataSection = document.getElementById('data');
+        if (dataSection) chartObserver.observe(dataSection);
+
+        function initCharts() {
+            // Balance Chart
+            new Chart(document.getElementById('balanceChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Alice', 'Bob', 'Charlie', 'Calvin'],
+                    datasets: [{
+                        label: 'Balance ($)',
+                        data: [500, 750.50, 10000, 100],
+                        backgroundColor: ['rgba(59,130,246,0.7)', 'rgba(139,92,246,0.7)', 'rgba(16,185,129,0.7)', 'rgba(244,63,94,0.7)'],
+                        borderRadius: 6
+                    }]
+                },
+                options: { ...commonOptions, scales: { y: { beginAtZero: true, grid: { color: 'rgba(148,163,184,0.1)' } }, x: { grid: { display: false } } } }
+            });
+
+            // Activity Chart
+            new Chart(document.getElementById('activityChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Withdrawals', 'Deposits'],
+                    datasets: [{ data: [7, 1], backgroundColor: ['rgba(244,63,94,0.8)', 'rgba(16,185,129,0.8)'], borderColor: '#1e293b', borderWidth: 2 }]
+                },
+                options: { ...commonOptions, cutout: '70%', plugins: { ...commonOptions.plugins, legend: { position: 'bottom' } } }
+            });
+
+            // Allocation Chart
+            new Chart(document.getElementById('allocationChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['BankSystem', 'User', 'BankManager', 'BankAccount', 'Transaction'],
+                    datasets: [{ label: 'Heap Objects', data: [1, 4, 3, 4, 8], backgroundColor: ['rgba(251,191,36,0.7)', 'rgba(16,185,129,0.7)', 'rgba(139,92,246,0.7)', 'rgba(56,189,248,0.7)', 'rgba(236,72,153,0.7)'], borderRadius: 6 }]
+                },
+                options: { ...commonOptions, indexAxis: 'y', scales: { x: { beginAtZero: true, grid: { color: 'rgba(148,163,184,0.1)' } }, y: { grid: { display: false } } } }
+            });
+
+            // Memory Chart
+            new Chart(document.getElementById('memoryChart'), {
+                type: 'polarArea',
+                data: {
+                    labels: ['BankSystem (User**)', 'BankSystem (Mgr**)', 'User (Account*)', 'Account (Tx*)'],
+                    datasets: [{ data: [4, 3, 4, 8], backgroundColor: ['rgba(251,191,36,0.6)', 'rgba(139,92,246,0.6)', 'rgba(16,185,129,0.6)', 'rgba(236,72,153,0.6)'], borderColor: '#1e293b', borderWidth: 2 }]
+                },
+                options: { ...commonOptions, plugins: { ...commonOptions.plugins, legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+            });
         }
+
+        // Initialize on load
+        updateProgress();
+        updateActiveSection();
     </script>
 
 </body>
