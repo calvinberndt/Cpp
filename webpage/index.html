@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bank Management System - Interactive Presentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
@@ -19,11 +18,6 @@
 
         h1, h2, h3, h4 { font-family: 'Inter', sans-serif; letter-spacing: -0.025em; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
-
-        .chart-container {
-            position: relative; width: 100%; max-width: 600px;
-            margin-left: auto; margin-right: auto; height: 350px; max-height: 400px;
-        }
 
         .glass-card {
             background: rgba(30, 41, 59, 0.7);
@@ -346,7 +340,6 @@
         <div class="section-dot tooltip" data-section="composition" data-tooltip="Composition"></div>
         <div class="section-dot tooltip" data-section="memory" data-tooltip="Memory"></div>
         <div class="section-dot tooltip" data-section="polymorphism" data-tooltip="Polymorphism"></div>
-        <div class="section-dot tooltip" data-section="data" data-tooltip="Analytics"></div>
     </div>
 
     <!-- Presentation Controls -->
@@ -378,7 +371,6 @@
                         <a href="#composition" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Composition</a>
                         <a href="#memory" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Memory</a>
                         <a href="#polymorphism" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Polymorphism</a>
-                        <a href="#data" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Analytics</a>
                     </div>
                 </div>
             </div>
@@ -566,7 +558,6 @@
                                     </div>
                                 </div>
                                 <div class="text-[10px] text-slate-500 mt-2 step-hint">Click to expand</div>
-                                <div class="absolute right-0 top-1/2 w-5 h-5 bg-emerald-500 rotate-45 z-20" style="transform: translate(50%, -50%) rotate(45deg);"></div>
                             </div>
 
                             <!-- BankManager Class -->
@@ -595,7 +586,13 @@
 
                         <!-- SVG Composition Line -->
                         <svg id="composition-line-svg" class="absolute" style="top: 0; left: 0; width: 100%; height: 800px; pointer-events: none; z-index: 5; overflow: visible;">
+                            <defs>
+                                <marker id="diamond-marker" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="12" markerHeight="12" orient="auto">
+                                    <polygon points="6,0 12,6 6,12 0,6" fill="#10b981"/>
+                                </marker>
+                            </defs>
                             <path id="composition-path" stroke="#10b981" stroke-width="3" fill="none" stroke-linecap="round" d=""/>
+                            <polygon id="composition-diamond" fill="#10b981" points=""/>
                         </svg>
 
                         <!-- ROW 4: BankAccount -->
@@ -1052,33 +1049,6 @@
             </div>
         </section>
 
-        <!-- DATA VISUALIZATION SECTION -->
-        <section id="data" class="space-y-8 scroll-section" data-section="data">
-            <div class="border-l-4 border-violet-500 pl-6 reveal-left">
-                <h2 class="text-3xl font-bold text-white">System Analytics</h2>
-                <p class="text-slate-400 mt-2 text-lg">Financial data from persistent file storage.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 stagger-children">
-                <div class="md:col-span-8 glass-card p-6 rounded-2xl">
-                    <h3 class="text-lg font-semibold text-white mb-2">User Account Balances</h3>
-                    <div class="chart-container"><canvas id="balanceChart"></canvas></div>
-                </div>
-                <div class="md:col-span-4 glass-card p-6 rounded-2xl">
-                    <h3 class="text-lg font-semibold text-white mb-2">Transaction Activity</h3>
-                    <div class="chart-container"><canvas id="activityChart"></canvas></div>
-                </div>
-                <div class="md:col-span-6 glass-card p-6 rounded-2xl">
-                    <h3 class="text-lg font-semibold text-white mb-2">Object Allocation</h3>
-                    <div class="chart-container"><canvas id="allocationChart"></canvas></div>
-                </div>
-                <div class="md:col-span-6 glass-card p-6 rounded-2xl">
-                    <h3 class="text-lg font-semibold text-white mb-2">Memory Ownership</h3>
-                    <div class="chart-container"><canvas id="memoryChart"></canvas></div>
-                </div>
-            </div>
-        </section>
-
         <!-- FOOTER -->
         <footer class="border-t border-slate-800 pt-12 pb-8 reveal">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -1207,6 +1177,9 @@
                     if (hint) hint.textContent = details.classList.contains('hidden') ? 'Click to expand' : 'Click to collapse';
                 }
                 item.classList.toggle('active');
+                // Reposition composition line after card expands/collapses
+                setTimeout(positionCompositionLine, 50);
+                setTimeout(positionCompositionLine, 400);
             });
         });
 
@@ -1342,8 +1315,9 @@
             const bankAccountRow = document.getElementById('bankaccount-row');
             const svg = document.getElementById('composition-line-svg');
             const path = document.getElementById('composition-path');
+            const diamond = document.getElementById('composition-diamond');
 
-            if (!userClass || !bankAccountRow || !svg || !path) return;
+            if (!userClass || !bankAccountRow || !svg || !path || !diamond) return;
 
             const parentContainer = document.querySelector('.min-w-\\[1000px\\]');
             if (!parentContainer) return;
@@ -1356,16 +1330,25 @@
             svg.setAttribute('height', Math.max(800, bankAccountRect.bottom - containerRect.top + 100));
 
             const userRight = userRect.right - containerRect.left;
-            const bankAccountLeft = bankAccountRect.left - containerRect.left;
-            const userBottom = userRect.bottom - containerRect.top;
+            const userCenterY = userRect.top + (userRect.height / 2) - containerRect.top;
+            const bankAccountLeft = bankAccountRect.left - containerRect.left + 40;
             const bankAccountTop = bankAccountRect.top - containerRect.top;
 
-            const diamondX = userRight + 10;
-            const startY = userBottom + 8;
-            const midY = startY + 70;
+            // Position diamond at the right edge of User card, vertically centered
+            const diamondX = userRight;
+            const diamondY = userCenterY;
+            const diamondSize = 10;
+            diamond.setAttribute('points',
+                `${diamondX},${diamondY - diamondSize} ${diamondX + diamondSize},${diamondY} ${diamondX},${diamondY + diamondSize} ${diamondX - diamondSize},${diamondY}`
+            );
+
+            // Draw path from diamond to BankAccount
+            const startX = diamondX + diamondSize;
+            const startY = diamondY;
+            const midX = startX + 30;
             const endY = bankAccountTop - 8;
 
-            const pathData = `M ${diamondX} ${startY} L ${diamondX} ${midY} L ${bankAccountLeft} ${midY} L ${bankAccountLeft} ${endY}`;
+            const pathData = `M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${bankAccountLeft} ${endY}`;
             path.setAttribute('d', pathData);
         }
 
@@ -1374,89 +1357,6 @@
             setTimeout(positionCompositionLine, 500);
         });
         window.addEventListener('resize', () => setTimeout(positionCompositionLine, 100));
-
-        // ============================================
-        // CHARTS
-        // ============================================
-        Chart.defaults.color = '#94a3b8';
-        Chart.defaults.font.family = "'Inter', sans-serif";
-
-        const commonOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                tooltip: {
-                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                    titleColor: '#f8fafc',
-                    bodyColor: '#cbd5e1',
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: 1,
-                    padding: 10,
-                    cornerRadius: 8
-                },
-                legend: { labels: { usePointStyle: true, padding: 20 } }
-            }
-        };
-
-        // Initialize charts when section is visible
-        const chartObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !entry.target.dataset.chartsInitialized) {
-                    entry.target.dataset.chartsInitialized = 'true';
-                    initCharts();
-                }
-            });
-        }, { threshold: 0.1 });
-
-        const dataSection = document.getElementById('data');
-        if (dataSection) chartObserver.observe(dataSection);
-
-        function initCharts() {
-            // Balance Chart
-            new Chart(document.getElementById('balanceChart'), {
-                type: 'bar',
-                data: {
-                    labels: ['Alice', 'Bob', 'Charlie', 'Calvin'],
-                    datasets: [{
-                        label: 'Balance ($)',
-                        data: [500, 750.50, 10000, 100],
-                        backgroundColor: ['rgba(59,130,246,0.7)', 'rgba(139,92,246,0.7)', 'rgba(16,185,129,0.7)', 'rgba(244,63,94,0.7)'],
-                        borderRadius: 6
-                    }]
-                },
-                options: { ...commonOptions, scales: { y: { beginAtZero: true, grid: { color: 'rgba(148,163,184,0.1)' } }, x: { grid: { display: false } } } }
-            });
-
-            // Activity Chart
-            new Chart(document.getElementById('activityChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Withdrawals', 'Deposits'],
-                    datasets: [{ data: [7, 1], backgroundColor: ['rgba(244,63,94,0.8)', 'rgba(16,185,129,0.8)'], borderColor: '#1e293b', borderWidth: 2 }]
-                },
-                options: { ...commonOptions, cutout: '70%', plugins: { ...commonOptions.plugins, legend: { position: 'bottom' } } }
-            });
-
-            // Allocation Chart
-            new Chart(document.getElementById('allocationChart'), {
-                type: 'bar',
-                data: {
-                    labels: ['BankSystem', 'User', 'BankManager', 'BankAccount', 'Transaction'],
-                    datasets: [{ label: 'Heap Objects', data: [1, 4, 3, 4, 8], backgroundColor: ['rgba(251,191,36,0.7)', 'rgba(16,185,129,0.7)', 'rgba(139,92,246,0.7)', 'rgba(56,189,248,0.7)', 'rgba(236,72,153,0.7)'], borderRadius: 6 }]
-                },
-                options: { ...commonOptions, indexAxis: 'y', scales: { x: { beginAtZero: true, grid: { color: 'rgba(148,163,184,0.1)' } }, y: { grid: { display: false } } } }
-            });
-
-            // Memory Chart
-            new Chart(document.getElementById('memoryChart'), {
-                type: 'polarArea',
-                data: {
-                    labels: ['BankSystem (User**)', 'BankSystem (Mgr**)', 'User (Account*)', 'Account (Tx*)'],
-                    datasets: [{ data: [4, 3, 4, 8], backgroundColor: ['rgba(251,191,36,0.6)', 'rgba(139,92,246,0.6)', 'rgba(16,185,129,0.6)', 'rgba(236,72,153,0.6)'], borderColor: '#1e293b', borderWidth: 2 }]
-                },
-                options: { ...commonOptions, plugins: { ...commonOptions.plugins, legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
-            });
-        }
 
         // Initialize on load
         updateProgress();
